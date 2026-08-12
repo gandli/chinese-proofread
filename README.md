@@ -4,13 +4,21 @@
 
 [![CI](https://github.com/gandli/chinese-proofread/actions/workflows/ci.yml/badge.svg)](https://github.com/gandli/chinese-proofread/actions/workflows/ci.yml)
 
-## 🎯 产品定位
+<p align="center">
+  <img src="./assets/readme/hero.svg" width="100%" alt="chinese-proofread 中文校对助手 — 浏览器本地 AI 中文长文智能校对，红色波浪线标出错别字并给出修正建议">
+</p>
 
-一个完全本地运行的浏览器扩展，对当前网页中的长篇文章进行智能校对
+## ✨ 它是什么
 
-核心卖点：**离线 + 隐私 + 中文智能校对** —— 正文和校对结果不上传服务器，断网也能工作。
+一个完全本地运行的浏览器扩展，对当前网页中的长篇文章做**中文智能校对**——错别字、常见语法、用词不当，在原文中标红并给出修正建议。
 
-## 🏗️ 架构
+**核心卖点**：离线 + 隐私 + 中文。
+
+- 🔒 正文和校对结果**不上传任何服务器**
+- 📴 **断网也能工作**
+- 📖 支持**长篇文章**（自动分段，超 512 token 也能处理）
+
+## 🏗️ 工作原理
 
 ```
 浏览器网页
@@ -22,7 +30,7 @@
   Mozilla Readability 正文提取
       │
       ▼
-  分词/分句 + 背景推理
+  分句 + 滑动窗口分段
       │
       ▼
   WebGPU (优先) ↔ WASM (fallback)
@@ -34,54 +42,60 @@
   结果高亮 diff + popup 展示
 ```
 
-* 双层引擎演进路线：
-  - **第一阶段**：轻量 MacBERT4CSC 负责快速错别字检测
-  - **第二阶段**：ChineseErrorCorrector-1.5B (Qwen 基底 LLM) 负责复杂语法/用词校对
-  - **第三阶段**：ChineseErrorCorrector4-4B 作为高质量效果旗舰
+## 🚀 快速开始
 
-## 🚀 使用方式
-
-### 开发
+### 开发调试
 
 ```bash
 bun install
 bun run setup:model   # 下载模型到 public/models/ (114MB)
 bun dev
-# 浏览器加载扩展：chrome://extensions/ → 加载解压后的 .output/chrome-mv3
+# 浏览器加载扩展：chrome://extensions/ → 开发者模式 → 加载已解压 → 选 .output/chrome-mv3
 ```
 
-### 编译
+### 构建
 
 ```bash
 bun run setup:model
 bun build
-# 输出：.output/chrome-mv3 可以直接打包安装
+# 输出：.output/chrome-mv3 可直接打包安装
 ```
 
-## 📦 模型
+### 测试
 
-当前内置模型：
-
-| 模型 | 大小 | 类型 | 任务 | 下载地址 |
-|------|------|------|------|----------|
-| MacBERT4CSC (Q8 量化) | **114 MB** | 字符级拼写纠错 | 快速扫描错别字 | [gandli/macbert4csc-base-chinese-q8-onnx](https://huggingface.co/gandli/macbert4csc-base-chinese-q8-onnx) |
-
-`bun run setup:model` 自动下载到 `public/models/`：
-
+```bash
+bun run test       # 单元测试 (vitest, 22 用例)
+bun run test:e2e   # 端到端 (Playwright 加载真实扩展)
+bun run compile    # 类型检查 (tsc)
 ```
+
+## 🧠 引擎路线
+
+双层演进：轻量模型快速扫描 → 大型 LLM 复杂校对。
+
+| 阶段 | 模型 | 大小 | 任务 |
+|------|------|------|------|
+| **① 当前** | MacBERT4CSC (Q8) | 114 MB | 字符级快速错别字检测 |
+| **② 规划** | ChineseErrorCorrector-1.5B (Q4) | ~900 MB | 复杂语法/上下文纠错 |
+| **③ 愿景** | ChineseErrorCorrector4-4B | — | 高质量效果旗舰 |
+
+## 📦 模型下载
+
+当前内置 MacBERT4CSC（Q8 量化，452MB → 114MB，精度无损）。
+
+```bash
+bun run setup:model
+```
+
+下载到 `public/models/`：
+
+```text
 public/models/
   ├── model_quantized.onnx
   └── vocab.txt
 ```
 
-* 下一阶段：ChineseErrorCorrector-1.5B (Q4) → ~ 900 MB | 生成式校对 | 复杂语法/上下文纠错
-
-## 🔒 隐私
-
-- ❌ 无云端 API 调用
-- ❌ 不上传正文/校对结果
-- ❌ 不需要用户账号
-- ✅ 断网依然可用
+模型来源：[gandli/macbert4csc-base-chinese-q8-onnx](https://huggingface.co/gandli/macbert4csc-base-chinese-q8-onnx)
 
 ## 📄 许可证
 
