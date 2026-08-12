@@ -11,13 +11,15 @@
     "zip": "wxt zip",
     "compile": "tsc --noEmit",
     "setup:model": "bun scripts/download-model.ts",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "onnxruntime-web": "^1.20.0",
     "@mozilla/readability": "^0.5.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@types/chrome": "^0.0.268",
     "@types/react": "^18",
     "@types/react-dom": "^18",
