@@ -15,14 +15,11 @@ export default function App() {
 
       const extracted = await chrome.tabs.sendMessage(tab.id, { type: 'extract' });
       const text: string = extracted?.text ?? '';
-      if (text.length > 510) {
-        // ponytail: MVP 截断，分段器是下一步 C
-        setErrMsg(`正文 ${text.length} 字超过 510 上限，先截断校对前 510 字`);
-      }
-      const clipped = text.slice(0, 510);
+      if (!text) throw new Error('未能提取到正文');
 
       setStatus('loading');
-      const resp = await chrome.runtime.sendMessage({ type: 'proofread', text: clipped });
+      // 传全文，长文分段由 background 的 splitLongText 处理
+      const resp = await chrome.runtime.sendMessage({ type: 'proofread', text });
       if (!resp.ok) throw new Error(resp.error);
 
       setStatus('done');
