@@ -76,9 +76,10 @@ describe('mergeDiffs', () => {
       { text: 'AB', offset: 0 },
       { text: 'BC', offset: 1 },
     ];
+    // 重叠字符 B: chunk1 内 position 1 → 全局 1; chunk2 内 position 0 → +offset 1 = 全局 1
     const chunkDiffs = [
-      [{ original: 'A', corrected: 'X', position: 0, confidence: 0.8 }],
-      [{ original: 'A', corrected: 'Y', position: 0, confidence: 0.95 }],
+      [{ original: 'B', corrected: 'X', position: 1, confidence: 0.8 }],
+      [{ original: 'B', corrected: 'Y', position: 0, confidence: 0.95 }],
     ];
     const merged = mergeDiffs(chunks, chunkDiffs);
     expect(merged).toHaveLength(1);
