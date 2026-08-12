@@ -24,7 +24,7 @@ function Squiggle({ size = 20, color = '#f87171' }: { size?: number; color?: str
   );
 }
 
-const BUSY = ['extracting', 'loading', 'correcting'] as const;
+const BUSY: readonly Status[] = ['extracting', 'loading', 'correcting'];
 
 function buttonLabel(status: Status) {
   switch (status) {
@@ -44,6 +44,10 @@ export default function App() {
   const [stats, setStats] = useState<{ chars: number; timeMs: number } | null>(null);
 
   async function run() {
+    // 清空上一轮结果，避免失败重试成功后仍显示旧错误
+    setErrMsg('');
+    setDiffs([]);
+    setStats(null);
     setStatus('extracting');
     try {
       const t0 = performance.now();
@@ -71,7 +75,7 @@ export default function App() {
     }
   }
 
-  const isBusy = BUSY.includes(status as any);
+  const isBusy = BUSY.includes(status);
 
   return (
     <div className="app">
@@ -84,7 +88,7 @@ export default function App() {
       </header>
 
       <button
-        className={`action${status === 'done' ? ' action--done' : ''}${status === 'error' ? ' action--error' : ''}`}
+        className={`action${status === 'done' ? ' action--done' : ''}${status === 'error' ? ' action--error' : ''}${isBusy ? ' action--busy' : ''}`}
         onClick={run}
         disabled={isBusy}
       >
