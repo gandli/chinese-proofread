@@ -50,7 +50,8 @@ export function splitLongText(text: string, maxChars = 510, overlap = 20): Split
       while (pos < sLen) {
         const end = Math.min(pos + maxChars, sLen);
         chunks.push({ text: sentence.slice(pos, end), offset: currentOffset + pos });
-        pos = end - Math.min(overlap, end - pos);
+        // 末段已到文末 (end === sLen) 时不再叠加 overlap，否则 pos 卡死 → 无限循环 OOM
+        pos = end === sLen ? sLen : end - Math.min(overlap, end - pos);
       }
       currentChunk = '';
       currentOffset += sLen;
