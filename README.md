@@ -43,6 +43,7 @@
 
 ```bash
 bun install
+bun run setup:model   # 下载模型到 public/models/ (114MB)
 bun dev
 # 浏览器加载扩展：chrome://extensions/ → 加载解压后的 .output/chrome-mv3
 ```
@@ -50,6 +51,7 @@ bun dev
 ### 编译
 
 ```bash
+bun run setup:model
 bun build
 # 输出：.output/chrome-mv3 可以直接打包安装
 ```
@@ -62,7 +64,8 @@ bun build
 |------|------|------|------|----------|
 | MacBERT4CSC (Q8 量化) | **114 MB** | 字符级拼写纠错 | 快速扫描错别字 | [gandli/macbert4csc-base-chinese-q8-onnx](https://huggingface.co/gandli/macbert4csc-base-chinese-q8-onnx) |
 
-下载后放置到 `public/models/` 目录：
+`bun run setup:model` 自动下载到 `public/models/`：
+
 ```
 public/models/
   ├── model_quantized.onnx

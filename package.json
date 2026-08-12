@@ -10,6 +10,7 @@
     "build:firefox": "wxt build -b firefox",
     "zip": "wxt zip",
     "compile": "tsc --noEmit",
+    "setup:model": "bun scripts/download-model.ts",
     "test": "vitest run"
   },
   "dependencies": {
