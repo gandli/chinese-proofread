@@ -6,6 +6,11 @@ node_modules
 dist/
 .wxt/
 
+# test artifacts
+test-results/
+playwright-report/
+.playwright/
+
 # logs
 *.log
 
