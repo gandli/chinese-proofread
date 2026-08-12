@@ -5,6 +5,7 @@ export default defineContentScript({
   matches: ['<all_urls>'],
   runAt: 'document_idle',
   main() {
+    document.documentElement.dataset.psInjected = 'true';
     chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
       if (msg?.type === 'extract') {
         const doc = document.cloneNode(true) as Document;
