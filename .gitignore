@@ -4,6 +4,7 @@ node_modules
 # output
 .output/
 dist/
+.wxt/
 
 # logs
 *.log

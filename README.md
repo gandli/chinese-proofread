@@ -2,6 +2,8 @@
 
 > 浏览器本地 AI 中文长文智能校对 — 离线可用，隐私保护
 
+[![CI](https://github.com/gandli/chinese-proofread/actions/workflows/ci.yml/badge.svg)](https://github.com/gandli/chinese-proofread/actions/workflows/ci.yml)
+
 ## 🎯 产品定位
 
 一个完全本地运行的浏览器扩展，对当前网页中的长篇文章进行智能校对
