@@ -20,6 +20,8 @@ export default defineContentScript({
       }
       if (msg?.type === 'highlight') {
         highlighter.apply(msg.fullText ?? '', msg.diffs);
+        // 同步到 side panel
+        chrome.runtime.sendMessage({ type: 'sync-diffs', diffs: msg.diffs, fullText: msg.fullText, tabId: msg.tabId });
         sendResponse({ ok: true });
         return;
       }
@@ -30,6 +32,11 @@ export default defineContentScript({
       }
       if (msg?.type === 'clear-highlights') {
         highlighter.clearAll();
+        sendResponse({ ok: true });
+        return;
+      }
+      if (msg?.type === 'jump-to') {
+        highlighter.jumpTo(msg.diff);
         sendResponse({ ok: true });
         return;
       }
@@ -54,14 +61,67 @@ class ProofHighlighter {
   private popover: ProofPopover | null = null;
   private appliedRanges = new Set<Range>();
   private clickHandler: ((e: MouseEvent) => void) | null = null;
+  // 撤销栈：存储位置信息而非 Range（避免 replaceWith 后 Range 失效）
+  private undoStack: Array<{ node: Text; startOffset: number; endOffset: number; oldText: string; newText: string; diff: Diff }> = [];
+  private redoStack: Array<{ node: Text; startOffset: number; endOffset: number; oldText: string; newText: string; diff: Diff }> = [];
 
   constructor() {
     this.ensureStyle();
     this.popover = new ProofPopover();
     this.clickHandler = (e: MouseEvent) => this.handleClick(e);
     document.addEventListener('click', this.clickHandler, true);
+    // 键盘撤销/重做
+    document.addEventListener('keydown', (e) => this.handleKeydown(e), true);
     // 调试用：暴露实例到 window（方便手动测试）
     (window as any).__proofHighlighter = this;
+  }
+
+  private handleKeydown(e: KeyboardEvent) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+      e.preventDefault();
+      this.undo();
+    } else if ((e.ctrlKey || e.metaKey) && (e.key === 'z' || e.key === 'y') && e.shiftKey) {
+      e.preventDefault();
+      this.redo();
+    }
+  }
+
+  /** 撤销最后一次修正 */
+  undo() {
+    const op = this.undoStack.pop();
+    if (!op) return;
+    // 重建 Range 并恢复原文
+    const range = document.createRange();
+    range.setStart(op.node, op.startOffset);
+    range.setEnd(op.node, op.endOffset);
+    (range as any).replaceWith(op.oldText);
+    // 恢复高亮
+    const hl = CSS.highlights.get('ps-proof') as Highlight | undefined;
+    if (hl) {
+      hl.add(range);
+      this.appliedRanges.add(range);
+    }
+    // 记录到 redo 栈（更新位置为当前位置）
+    this.redoStack.push({ ...op, startOffset: op.startOffset, endOffset: op.startOffset + op.oldText.length });
+  }
+
+  /** 重做 */
+  redo() {
+    const op = this.redoStack.pop();
+    if (!op) return;
+    // 重建 Range 并重新应用修正
+    const range = document.createRange();
+    range.setStart(op.node, op.startOffset);
+    range.setEnd(op.node, op.endOffset);
+    (range as any).replaceWith(op.newText);
+    // 移除高亮
+    const hl = CSS.highlights.get('ps-proof') as Highlight | undefined;
+    if (hl) {
+      hl.delete(range);
+      this.appliedRanges.delete(range);
+    }
+    // 记录到 undo 栈
+    this.undoStack.push({ ...op, startOffset: op.startOffset, endOffset: op.startOffset + op.newText.length });
   }
 
   /** 根据 popup 传来的全文+diffs，模糊匹配映射到页面文本节点并高亮 */
@@ -138,58 +198,130 @@ class ProofHighlighter {
 
   private handleClick(e: MouseEvent) {
     if (!this.appliedRanges.size) return;
-    const range = this.findRangeAtPoint(e.clientX, e.clientY);
+    // 使用 caretRangeFromPoint 获取点击位置的精确 Range（原生 API，支持跨节点、transform、滚动容器）
+    const caretRange = document.caretRangeFromPoint(e.clientX, e.clientY);
+    if (!caretRange) { this.popover?.hide(); return; }
+    // 在已应用的高亮中查找包含该 caretRange 的 range
+    const range = this.findRangeContainingCaret(caretRange);
     if (!range) { this.popover?.hide(); return; }
-    // 找对应 diff
     const entry = this.findDiffForRange(range);
     if (!entry) { this.popover?.hide(); return; }
-    const rect = range.getBoundingClientRect();
-    this.popover?.show(entry.diff, rect, () => this.applyCorrection(entry));
+    
+    // 检查是否在可编辑元素内
+    const editableEl = this.isInEditable(range.startContainer);
+    if (editableEl) {
+      // 可编辑元素：使用原生 execCommand 或直接操作 value
+      this.applyCorrectionInEditable(entry, editableEl);
+    } else {
+      const rect = range.getBoundingClientRect();
+      this.popover?.show(entry.diff, rect, () => this.applyCorrection(entry));
+    }
   }
 
-  /** 用坐标包含判断：点击点是否落在某高亮的矩形内 */
-  private findRangeAtPoint(x: number, y: number): Range | null {
+  /** 判断节点是否在可编辑元素内（contenteditable/textarea/input） */
+  private isInEditable(node: Node): HTMLElement | null {
+    let el = node.nodeType === Node.TEXT_NODE ? node.parentElement : node as Element;
+    while (el) {
+      if ((el as HTMLElement).isContentEditable || el.tagName === 'TEXTAREA' || el.tagName === 'INPUT') {
+        return el as HTMLElement;
+      }
+      el = el.parentElement;
+    }
+    return null;
+  }
+
+  /** 查找包含 caretRange 的高亮 range */
+  private findRangeContainingCaret(caretRange: Range): Range | null {
     for (const r of this.appliedRanges) {
-      const rects = r.getClientRects();
-      for (const rect of rects) {
-        if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
-          return r;
-        }
+      // 如果 caretRange 与高亮 range 相交，或 caretRange 的起点在高亮 range 内
+      if (this.rangesIntersect(caretRange, r) || this.isPointInRange(caretRange.startContainer, caretRange.startOffset, r)) {
+        return r;
       }
     }
     return null;
   }
 
-  private findDiffForRange(range: Range): { node: Text; localPos: number; diff: Diff } | null {
+  private rangesIntersect(a: Range, b: Range): boolean {
+    // 简单判断：两个 range 的边界是否重叠
+    const aBeforeB = a.compareBoundaryPoints(Range.END_TO_START, b) < 0;
+    const bBeforeA = b.compareBoundaryPoints(Range.END_TO_START, a) < 0;
+    return !aBeforeB && !bBeforeA;
+  }
+
+  private isPointInRange(node: Node, offset: number, range: Range): boolean {
+    if (range.startContainer === node && range.endContainer === node) {
+      return offset >= range.startOffset && offset <= range.endOffset;
+    }
+    // 跨节点情况简化处理：比较 boundary points
+    try {
+      const pointRange = document.createRange();
+      pointRange.setStart(node, offset);
+      pointRange.collapse(true);
+      return range.compareBoundaryPoints(Range.START_TO_START, pointRange) <= 0 &&
+             range.compareBoundaryPoints(Range.END_TO_END, pointRange) >= 0;
+    } catch {
+      return false;
+    }
+  }
+
+  private findDiffForRange(range: Range): { node: Text; localPos: number; diff: Diff; range: Range } | null {
     for (const list of this.diffNodes.values()) {
       for (const item of list) {
-        if (item.node === range.startContainer && item.localPos === range.startOffset) return item;
+        if (item.node === range.startContainer && item.localPos === range.startOffset) return { ...item, range };
       }
     }
     return null;
   }
 
-  /** 原地修正 + 撤销 + 清除该处高亮 */
-  applyCorrection(entry: { node: Text; localPos: number; diff: Diff }) {
-    const { node, localPos, diff } = entry;
-    const old = node.data.slice(localPos, localPos + diff.original.length);
-    node.data = node.data.slice(0, localPos) + diff.corrected + node.data.slice(localPos + diff.original.length);
-    // 记录撤销
-    node.parentElement?.setAttribute('data-ps-orig', old);
+  /** 原地修正 + 撤销 + 清除该处高亮（使用 Range.replaceWith 支持跨节点） */
+  applyCorrection(entry: { node: Text; localPos: number; diff: Diff; range: Range }) {
+    const { range, diff } = entry;
+    const old = range.toString();
+    const startOffset = range.startOffset;
+    const endOffset = range.endOffset;
+    const node = range.startContainer as Text;
+    // Range.replaceWith 自动处理跨节点、合并相邻文本节点 (ES2022)
+    (range as any).replaceWith(diff.corrected);
+    // 记录撤销栈（存位置而非 Range）
+    this.undoStack.push({ node, startOffset, endOffset, oldText: old, newText: diff.corrected, diff });
+    this.redoStack.length = 0; // 新操作清空 redo 栈
     // 移除该处高亮
     this.removeRangeFor(entry);
   }
 
-  private removeRangeFor(entry: { node: Text; localPos: number; diff: Diff }) {
+  /** 可编辑元素内的修正（contenteditable/textarea/input） */
+  applyCorrectionInEditable(entry: { node: Text; localPos: number; diff: Diff; range: Range }, editableEl: HTMLElement) {
+    const { range, diff } = entry;
+    const old = range.toString();
+    const startOffset = range.startOffset;
+    const endOffset = range.endOffset;
+    const node = range.startContainer as Text;
+    
+    if (editableEl.tagName === 'TEXTAREA' || editableEl.tagName === 'INPUT') {
+      // textarea/input: 直接操作 value
+      const textarea = editableEl as HTMLTextAreaElement | HTMLInputElement;
+      const start = range.startOffset;
+      const end = range.endOffset;
+      textarea.value = textarea.value.slice(0, start) + diff.corrected + textarea.value.slice(end);
+      // 触发 input 事件
+      textarea.dispatchEvent(new Event('input', { bubbles: true }));
+    } else if ((editableEl as HTMLElement).isContentEditable) {
+      // contenteditable: 使用 execCommand 或直接操作
+      document.execCommand('insertText', false, diff.corrected);
+    }
+    
+    // 记录撤销栈（存位置而非 Range）
+    this.undoStack.push({ node, startOffset, endOffset, oldText: old, newText: diff.corrected, diff });
+    this.redoStack.length = 0;
+    // 移除该处高亮
+    this.removeRangeFor(entry);
+  }
+
+  private removeRangeFor(entry: { node: Text; localPos: number; diff: Diff; range: Range }) {
     const hl = CSS.highlights.get('ps-proof') as Highlight | undefined;
     if (hl) {
-      for (const r of [...hl]) {
-        const range = r as Range;
-        if (range.startContainer === entry.node && range.startOffset === entry.localPos) {
-          hl.delete(range);
-          this.appliedRanges.delete(range);
-        }
-      }
+      hl.delete(entry.range);
+      this.appliedRanges.delete(entry.range);
     }
     // 从 diffNodes 移除
     for (const [el, list] of this.diffNodes) {
@@ -210,6 +342,35 @@ class ProofHighlighter {
           hl.delete(range);
           this.appliedRanges.delete(range);
         }
+      }
+    }
+  }
+
+  /** Side Panel 跳转：滚动到对应高亮并短暂闪烁 */
+  jumpTo(diff: Diff) {
+    const hl = CSS.highlights.get('ps-proof') as Highlight | undefined;
+    if (!hl) return;
+    for (const r of [...hl]) {
+      const range = r as Range;
+      if (range.startContainer.nodeValue?.slice(range.startOffset, range.startOffset + diff.original.length) === diff.original) {
+        const rects = range.getClientRects();
+        if (rects.length) {
+          const rect = rects[0];
+          // 滚动到视口中心
+          window.scrollTo({
+            left: rect.left + window.scrollX - window.innerWidth / 2 + rect.width / 2,
+            top: rect.top + window.scrollY - window.innerHeight / 2 + rect.height / 2,
+            behavior: 'smooth',
+          });
+          // 闪烁高亮（临时改色）
+          const style = document.getElementById(STYLE_ID);
+          if (style) {
+            const orig = style.textContent;
+            style.textContent = orig?.replace('#ef4444', '#f59e0b') || '';
+            setTimeout(() => { style.textContent = orig || ''; }, 1500);
+          }
+        }
+        break;
       }
     }
   }
@@ -243,16 +404,15 @@ class ProofHighlighter {
   }
 }
 
-/** 修正气泡：Shadow DOM 隔离 + Popover API + flip 动画 */
+/** 修正气泡：原生 Popover API（自动 Esc 关闭、焦点管理） */
 class ProofPopover {
   private el: HTMLDivElement;
   private onApply: (() => void) | null = null;
-  private keydownHandler: ((e: KeyboardEvent) => void) | null = null;
-  private outsideHandler: ((e: MouseEvent) => void) | null = null;
 
   constructor() {
     this.el = document.createElement('div');
-    this.el.style.cssText = `position:fixed;z-index:2147483647;display:none;font:14px/1.5 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif;color:#1a2233;background:#fff;border:1px solid #e5e9f0;border-radius:10px;box-shadow:0 8px 32px rgba(15,23,42,.16);padding:12px 14px;min-width:180px;max-width:280px`;
+    this.el.popover = 'manual';
+    this.el.style.cssText = `font:14px/1.5 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif;color:#1a2233;background:#fff;border:1px solid #e5e9f0;border-radius:10px;box-shadow:0 8px 32px rgba(15,23,42,.16);padding:12px 14px;min-width:180px;max-width:280px`;
     this.el.setAttribute('role', 'dialog');
     this.el.setAttribute('aria-live', 'assertive');
     document.documentElement.appendChild(this.el);
@@ -289,24 +449,16 @@ class ProofPopover {
     this.el.append(change, meta, actions);
 
     // 定位：锚点下方，viewport 边缘翻转
-    this.el.style.display = 'block';
     const elRect = this.el.getBoundingClientRect();
     let x = anchor.left + anchor.width / 2 - elRect.width / 2;
     let y = anchor.bottom + 8;
     if (x < 8) x = 8;
     if (x + elRect.width > window.innerWidth - 8) x = window.innerWidth - elRect.width - 8;
     if (y + elRect.height > window.innerHeight - 8) y = anchor.top - elRect.height - 8;
-    // 固定定位：fixed + 视口坐标直接用
-    this.el.style.left = `${Math.max(8, x)}px`;
-    this.el.style.top = `${Math.max(8, y)}px`;
-
-    // 外部点击关闭 + Esc
-    this.outsideHandler = (e: MouseEvent) => {
-      if (!this.el.contains(e.target as Node)) this.hide();
-    };
-    setTimeout(() => document.addEventListener('click', this.outsideHandler!, true), 50);
-    this.keydownHandler = (e: KeyboardEvent) => { if (e.key === 'Escape') this.hide(); };
-    document.addEventListener('keydown', this.keydownHandler, true);
+    this.el.style.position = 'fixed';
+    this.el.style.left = `${x}px`;
+    this.el.style.top = `${y}px`;
+    this.el.showPopover();
   }
 
   private btn(text: string, bg: string, fg: string, border = 'none'): HTMLButtonElement {
@@ -317,10 +469,7 @@ class ProofPopover {
   }
 
   hide() {
-    this.el.style.display = 'none';
-    if (this.outsideHandler) document.removeEventListener('click', this.outsideHandler, true);
-    if (this.keydownHandler) document.removeEventListener('keydown', this.keydownHandler, true);
-    this.outsideHandler = null;
-    this.keydownHandler = null;
+    this.el.hidePopover();
+    this.onApply = null;
   }
 }

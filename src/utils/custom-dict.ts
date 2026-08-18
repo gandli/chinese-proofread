@@ -1,0 +1,116 @@
+/** 自定义词典加载器（扩展环境：chrome.runtime.getURL） */
+export interface CustomDictEntry {
+  term: string;
+  action: 'ignore' | 'correct';
+  correctTo?: string;
+  domains?: string[];
+}
+
+export interface CustomDict {
+  version: number;
+  entries: CustomDictEntry[];
+}
+
+export interface Diff {
+  position: number;
+  original: string;
+  corrected: string;
+  confidence: number;
+}
+
+let dictCache: CustomDict | null = null;
+let dictLoaded = false;
+
+/** 加载词典（扩展环境：chrome.runtime.getURL / fetch） */
+export async function loadCustomDict(): Promise<CustomDict> {
+  if (dictLoaded && dictCache) return dictCache;
+  try {
+    if (typeof chrome !== 'undefined' && chrome.runtime?.getURL) {
+      const res = await fetch(chrome.runtime.getURL('custom-dict.json'));
+      if (res.ok) {
+        dictCache = await res.json();
+        dictLoaded = true;
+        return dictCache!;
+      }
+    }
+    // 扩展环境未命中：回退到空词典（Node 环境加载由单独模块处理）
+    console.warn('[custom-dict] chrome.runtime.getURL unavailable, using empty dict');
+    dictCache = { version: 1, entries: [] };
+  } catch (e) {
+    console.error('[custom-dict] Load failed:', e);
+    dictCache = { version: 1, entries: [] };
+  }
+  dictLoaded = true;
+  return dictCache!;
+}
+
+/** 清除缓存（热重载用） */
+export function reloadCustomDict(): void {
+  dictCache = null;
+  dictLoaded = false;
+}
+
+/** 最长前缀匹配：返回命中的 entry 及其在文本中的位置 */
+function findMatches(text: string, entries: CustomDictEntry[]): Array<{ entry: CustomDictEntry; start: number; end: number }> {
+  const matches: Array<{ entry: CustomDictEntry; start: number; end: number }> = [];
+  let i = 0;
+  while (i < text.length) {
+    let best: { entry: CustomDictEntry; len: number } | null = null;
+    for (const entry of entries) {
+      const term = entry.term;
+      if (text.startsWith(term, i)) {
+        if (!best || term.length > best.len) {
+          best = { entry, len: term.length };
+        }
+      }
+    }
+    if (best) {
+      matches.push({ entry: best.entry, start: i, end: i + best.len });
+      i += best.len;
+    } else {
+      i++;
+    }
+  }
+  return matches;
+}
+
+/** 应用自定义词典到 diffs
+ *  - ignore: 删除该 diff
+ *  - correct: 替换 diff.corrected 为 correctTo
+ *  - 同时过滤掉与自定义词典术语重叠的模型 diffs（避免重复标记）
+ */
+export function applyCustomDict(text: string, diffs: Diff[]): Diff[] {
+  if (!dictCache) return diffs;
+  const matches = findMatches(text, dictCache.entries);
+  if (matches.length === 0) return diffs;
+
+  const ignoreRanges: Array<[number, number]> = [];
+  const correctMap = new Map<string, string>();
+
+  for (const m of matches) {
+    if (m.entry.action === 'ignore') {
+      ignoreRanges.push([m.start, m.end]);
+    } else if (m.entry.action === 'correct' && m.entry.correctTo) {
+      correctMap.set(`${m.start}-${m.end}`, m.entry.correctTo);
+    }
+  }
+
+  function intersectsIgnore(diff: Diff): boolean {
+    const dStart = diff.position;
+    const dEnd = dStart + diff.original.length;
+    return ignoreRanges.some(([s, e]) => !(dEnd <= s || dStart >= e));
+  }
+
+  const filtered = diffs.filter(d => !intersectsIgnore(d));
+  const corrected = filtered.map(d => {
+    const key = `${d.position}-${d.position + d.original.length}`;
+    if (correctMap.has(key)) {
+      return { ...d, corrected: correctMap.get(key)! };
+    }
+    return d;
+  });
+  return corrected;
+}
+
+/** 测试导出 */
+export { findMatches, dictCache };

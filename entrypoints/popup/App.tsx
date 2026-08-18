@@ -4,6 +4,7 @@ import { useState, useRef } from 'react';
 import './popup.css';
 import { MacBertCorrector } from '../../src/engines/macbert';
 import { splitLongText, mergeDiffs } from '../../src/utils/splitter';
+import { loadCustomDict, applyCustomDict } from '../../src/utils/custom-dict';
 
 let corrector: MacBertCorrector | null = null;
 let correctorInit: Promise<MacBertCorrector> | null = null;
@@ -62,6 +63,22 @@ export default function App() {
   const [stats, setStats] = useState<{ chars: number; timeMs: number } | null>(null);
   const tabRef = useRef<chrome.tabs.Tab[]>([]);
 
+  // 测试钩子：允许直接注入状态（供 e2e 截图用）
+  if (typeof window !== 'undefined') {
+    (window as any).__TEST__ = (window as any).__TEST__ || {};
+    (window as any).__TEST__.setState = (partial: Partial<{
+      status: Status;
+      diffs: Diff[];
+      stats: { chars: number; timeMs: number } | null;
+      errMsg: string;
+    }>) => {
+      if (partial.status) setStatus(partial.status);
+      if (partial.diffs) setDiffs(partial.diffs);
+      if (partial.stats !== undefined) setStats(partial.stats);
+      if (partial.errMsg !== undefined) setErrMsg(partial.errMsg);
+    };
+  }
+
   async function run() {
     setErrMsg('');
     setDiffs([]);
@@ -84,13 +101,18 @@ export default function App() {
         const res = await corrector.correct(chunk.text);
         return res.diffs;
       }));
-      const merged = mergeDiffs(chunks, chunkDiffs);
+      let merged = mergeDiffs(chunks, chunkDiffs);
+
+      // 应用自定义词典（行业专业词库）
+      await loadCustomDict();
+      merged = applyCustomDict(text, merged);
+
       setDiffs(merged);
       setStats({ chars: text.length, timeMs: Math.round(performance.now() - t0) });
       setStatus('done');
 
       if (merged.length > 0) {
-        await chrome.tabs.sendMessage(tab.id, { type: 'highlight', fullText: text, diffs: merged });
+        await chrome.tabs.sendMessage(tab.id, { type: 'highlight', fullText: text, diffs: merged, tabId: tab.id });
       }
     } catch (err) {
       setStatus('error');
