@@ -49,6 +49,12 @@ function SidePanel() {
     activeTabId: null,
   });
 
+  // 测试钩子：暴露 setState 给 E2E
+  useEffect(() => {
+    (window as any).__TEST__ = { setState: (s: Partial<SidePanelState>) => setState(prev => ({ ...prev, ...s })) };
+    return () => { delete (window as any).__TEST__; };
+  }, []);
+
   // 监听 popup/content 发来的高亮数据
   useEffect(() => {
     const handleMessage = (msg: any) => {

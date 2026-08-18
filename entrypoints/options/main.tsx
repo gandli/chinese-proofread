@@ -23,9 +23,10 @@ function Options() {
   const [activeDomain, setActiveDomain] = useState<string>('all');
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
-  // 加载词典
+  // 测试钩子：暴露 setState 给 E2E
   useEffect(() => {
-    loadDict();
+    (window as any).__TEST__ = { setState: (s: Partial<CustomDict>) => setDict(prev => ({ ...prev, ...s })) };
+    return () => { delete (window as any).__TEST__; };
   }, []);
 
   async function loadDict() {
@@ -37,6 +38,11 @@ function Options() {
       showMessage('error', '加载词典失败: ' + err);
     }
   }
+
+  // 加载词典
+  useEffect(() => {
+    loadDict();
+  }, []);
 
   function showMessage(type: 'success' | 'error', text: string) {
     setMessage({ type, text });
