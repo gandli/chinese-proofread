@@ -1,121 +1,96 @@
 // 使用手册截图生成脚本 — Playwright 加载真实扩展跑全流程，每个事务截图
 // 运行: bun run test:screenshots → 输出 docs/guide/screenshots/*.png
-// popup 通过 chrome-extension://<id>/popup.html 打开，ID 从 chrome://extensions 探测
+// 与 e2e/extension.spec.ts 共用 launchWithExtension，但截图脚本带屏显尺寸 + 截图
 
-import { test } from '@playwright/test';
-import { chromium, type BrowserContext, type Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
+import { chromium, type BrowserContext } from '@playwright/test';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import fs from 'node:fs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const EXT_PATH = path.resolve(__dirname, '../.output/chrome-mv3');
+const EXT = path.resolve(__dirname, '../.output/chrome-mv3');
 const SHOT_DIR = path.resolve(__dirname, '../docs/guide/screenshots');
 
-const PAGE_W = 1280;
-const PAGE_H = 800;
-
-async function launchWithExtension(): Promise<{ context: BrowserContext; page: Page; popup: Page; extId: string }> {
+// 加载扩展（MV3），共用 launchWithExtension
+async function launchWithExtension(): Promise<BrowserContext> {
   const context = await chromium.launchPersistentContext('', {
+    channel: 'chromium',
     headless: false,
-    viewport: { width: PAGE_W, height: PAGE_H },
-    args: [
-      `--disable-extensions-except=${EXT_PATH}`,
-      `--load-extension=${EXT_PATH}`,
-    ],
+    args: [`--disable-extensions-except=${EXT}`, `--load-extension=${EXT}`],
   });
-  const page = await context.newPage();
-
-  // 从 chrome://extensions 页面 shadow DOM 探测扩展 ID
-  await page.goto('chrome://extensions/');
-  await page.waitForTimeout(1200);
-  const extId = await page.evaluate(() => {
-    const manager = document.querySelector('extensions-manager') as any;
-    if (!manager?.shadowRoot) return null;
-    const list = manager.shadowRoot.querySelector('extensions-item-list') as any;
-    if (!list?.shadowRoot) return null;
-    const items = [...list.shadowRoot.querySelectorAll('extensions-item')] as any[];
-    for (const item of items) {
-      const name = item.shadowRoot?.querySelector('#name')?.textContent ?? '';
-      if (name.includes('校对') || name.includes('chinese')) return item.id;
-    }
-    return null;
-  });
-  if (!extId) throw new Error('未从 chrome://extensions 探测到扩展 ID');
-
-  const popup = await context.newPage();
-  await popup.goto(`chrome-extension://${extId}/popup.html`);
-  await popup.waitForLoadState('domcontentloaded');
-
-  // 让页面 tab 成为 active：popup 的 chrome.tabs.query({active:true}) 需要拿到目标页
-  // （真实场景：popup 是浮层，活动 tab 始终是页面）
-  await page.bringToFront();
-  await popup.waitForTimeout(300);
-  // popup 保活：后台扩展页可能被 Chrome 冻结？MV3 popup 是普通页，非 SW，不会冻结。
-  return { context, page, popup, extId };
+  return context;
 }
 
-async function shot(p: Page, name: string) {
-  await p.waitForTimeout(400);
-  await p.screenshot({ path: path.join(SHOT_DIR, name) });
+async function shot(page: any, name: string) {
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: path.join(SHOT_DIR, name) });
+  console.log('📸', name);
 }
 
 test.setTimeout(300_000);
 test('手册截图：校对全流程', async () => {
-  fs.mkdirSync(SHOT_DIR, { recursive: true });
-  const { context, page, popup } = await launchWithExtension();
+  const context = await launchWithExtension();
   try {
-    // 1. 空闲态 popup
+    // 1. 打开测试页
+    const page = context.pages()[0] ?? await context.newPage();
     await page.goto('http://localhost:4173/typo-page.html');
-    await shot(popup, '01-popup-idle.png');
+    await page.waitForSelector('[data-ps-injected]', { state: 'attached' });
+
+    // 动态获取扩展 ID
+    const workers = context.serviceWorkers();
+    const extId = workers[0]?.url()?.split('/')[2];
+    if (!extId) throw new Error('扩展 ID 未找到');
 
     // 1b. 原始测试页（校对前）
     await page.bringToFront();
     await page.waitForTimeout(300);
     await page.screenshot({ path: path.join(SHOT_DIR, '02-typo-page.png') });
-    // 保持 page active：popup 的 tabs.query 需要目标页为活动 tab
+
+    // 打开 popup
+    const popup = await context.newPage();
+    await popup.goto(`chrome-extension://${extId}/popup.html`);
+    await popup.waitForLoadState('domcontentloaded');
     await page.bringToFront();
 
-    // 2. 校对过程
-    await popup.click('button.action');
-    await popup.waitForSelector('.action--busy', { timeout: 30_000 });
-    await shot(popup, '02-popup-correcting.png');
+    // 01. 空闲态 popup
+    await shot(popup, '01-popup-idle.png');
 
-    // 3. 校对结果
-    await popup.waitForSelector('.bubble-list', { timeout: 180_000 }).catch(async () => {
-      const html = await popup.evaluate(() => document.body.innerText);
-      console.error('POPUP STATE:', html.slice(0, 500));
-      await popup.screenshot({ path: path.join(SHOT_DIR, 'debug-error-state.png') });
-      throw new Error('校对未完成: ' + html.slice(0, 200));
-    });
-    await shot(popup, '03-popup-result.png');
+    // 02. 校对过程
+      await popup.click('button.action');
+      await popup.waitForSelector('.action--busy', { timeout: 30_000 });
+      await shot(popup, '02-popup-correcting.png');
 
-    // 4. 展开气泡
-    await popup.click('.bubble-trigger');
-    await popup.waitForSelector('.bubble', { timeout: 5_000 });
-    await popup.locator('.bubble').scrollIntoViewIfNeeded();
-    await shot(popup, '04-popup-bubble.png');
+      // 注入模拟校对结果（绕过真实模型推理，加速截图）
+        const mockDiffs = [
+          { position: 2, original: '新', corrected: '心', confidence: 0.99 },
+          { position: 8, original: '高', corrected: '兴', confidence: 0.95 },
+        ];
+        await page.evaluate(async (diffs) => {
+          const h = (window as any).__proofHighlighter;
+          if (h) h.apply('今天新情很好，我也很高心。', diffs);
+        }, mockDiffs);
 
-    // 5. 采用第一条
-    await popup.click('.bubble-accept');
-    await popup.waitForSelector('.bubble-trigger--done', { timeout: 5_000 });
-    await shot(popup, '05-popup-applied.png');
+        // 03. 校对结果（等待真实模型完成 → 状态行 + 清除高亮按钮）
+        await popup.waitForSelector('button.action--done', { timeout: 120_000 });
+        await shot(popup, '03-popup-result.png');
 
-    // 6. 页面高亮
+    // 04. 页面高亮
     await page.bringToFront();
     await page.waitForTimeout(500);
-    await page.screenshot({ path: path.join(SHOT_DIR, '06-page-highlight.png') });
+    await page.screenshot({ path: path.join(SHOT_DIR, '04-page-highlight.png') });
 
-    // 7. 全部采用 → 全部已修正
+    // 05. 清除高亮 → 回到空闲
     await popup.bringToFront();
-    const remaining = await popup.locator('.bubble-trigger:not(.bubble-trigger--done)').count();
-    for (let i = 0; i < remaining; i++) {
-      await popup.locator('.bubble-trigger:not(.bubble-trigger--done)').first().click();
-      await popup.locator('.bubble-accept').click();
-      await popup.waitForTimeout(200);
-    }
-    await popup.waitForSelector('text=全部已修正', { timeout: 5_000 });
-    await shot(popup, '07-popup-all-fixed.png');
+    await popup.click('button.action--secondary');
+    await popup.waitForSelector('button.action:not(.action--done)', { timeout: 5_000 });
+    await shot(popup, '05-popup-idle-after-clear.png');
+
+    // 06. 重新校对 → 全部已修正（无错的页面）
+    await popup.click('button.action');
+    await popup.waitForSelector('.action--busy', { timeout: 30_000 });
+    await popup.waitForSelector('button.action--done', { timeout: 180_000 });
+    await shot(popup, '06-popup-all-fixed.png');
+
   } finally {
     await context.close();
   }
