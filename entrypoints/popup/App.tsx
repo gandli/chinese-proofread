@@ -1,5 +1,23 @@
 import { useState, useEffect, useRef } from 'react';
 import './popup.css';
+import { MacBertCorrector } from '../../src/engines/macbert';
+import { splitLongText, mergeDiffs } from '../../src/utils/splitter';
+
+// popup 级模型单例（popup 打开期间常驻）
+let corrector: MacBertCorrector | null = null;
+let correctorInit: Promise<MacBertCorrector> | null = null;
+async function getCorrector(): Promise<MacBertCorrector> {
+  if (corrector) return corrector;
+  correctorInit ??= (async () => {
+    const c = new MacBertCorrector(
+      chrome.runtime.getURL('models/model_quantized.onnx'),
+      chrome.runtime.getURL('models/vocab.txt'),
+    );
+    await c.init();
+    return c;
+  })();
+  return (corrector = await correctorInit);
+}
 
 type Status = 'idle' | 'extracting' | 'loading' | 'correcting' | 'done' | 'error';
 
@@ -74,15 +92,20 @@ export default function App() {
       if (!text) throw new Error('未能提取到页面正文');
 
       setStatus('loading');
-      const resp = await chrome.runtime.sendMessage({ type: 'proofread', text });
-      if (!resp.ok) throw new Error(resp.error);
-
-      setDiffs(resp.result.diffs);
+      // 引擎直接在 popup 跑（SW 无法初始化 onnxruntime wasm）
+      const corrector = await getCorrector();
+      const chunks = splitLongText(text, 510, 20);
+      const chunkDiffs = await Promise.all(chunks.map(async (chunk) => {
+        const res = await corrector.correct(chunk.text);
+        return res.diffs;
+      }));
+      const diffs = mergeDiffs(chunks, chunkDiffs);
+      setDiffs(diffs);
       setStats({ chars: text.length, timeMs: Math.round(performance.now() - t0) });
       setStatus('done');
 
-      if (resp.result.diffs.length > 0) {
-        await chrome.tabs.sendMessage(tab.id, { type: 'highlight', diffs: resp.result.diffs });
+      if (diffs.length > 0) {
+        await chrome.tabs.sendMessage(tab.id, { type: 'highlight', fullText: text, diffs });
       }
     } catch (err) {
       setStatus('error');

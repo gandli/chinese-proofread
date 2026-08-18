@@ -23,8 +23,11 @@ export class MacBertCorrector {
   async init(): Promise<void> {
     if (this.session) return;
     const [ort] = await Promise.all([import('onnxruntime-web'), this.loadVocab()]);
+    // MV3 service worker 无 XMLHttpRequest/动态 import：单线程 wasm + 显式 wasm 路径
+    ort.env.wasm.numThreads = 1;
+    ort.env.wasm.wasmPaths = chrome.runtime.getURL('wasm/');
     this.session = await ort.InferenceSession.create(this.modelUrl, {
-      executionProviders: ['webgpu', 'wasm'],
+      executionProviders: ['wasm'],
       graphOptimizationLevel: 'all',
     });
   }
