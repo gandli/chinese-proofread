@@ -1,9 +1,10 @@
-import { useState, useEffect, useRef } from 'react';
+// Popup: 极简状态面板 + 触发入口
+// 页面交互（高亮点击 → popover）已在 content.ts 完成
+import { useState, useRef } from 'react';
 import './popup.css';
 import { MacBertCorrector } from '../../src/engines/macbert';
 import { splitLongText, mergeDiffs } from '../../src/utils/splitter';
 
-// popup 级模型单例（popup 打开期间常驻）
 let corrector: MacBertCorrector | null = null;
 let correctorInit: Promise<MacBertCorrector> | null = null;
 async function getCorrector(): Promise<MacBertCorrector> {
@@ -28,7 +29,6 @@ interface Diff {
   confidence: number;
 }
 
-// 校对波浪线 — 项目签名元素（与 hero SVG 同源）
 function Squiggle({ size = 20, color = '#ef4444' }: { size?: number; color?: string }) {
   return (
     <svg width={size} height={Math.round(size / 2)} viewBox="0 0 20 10" fill="none" aria-hidden="true">
@@ -47,9 +47,9 @@ const BUSY: readonly Status[] = ['extracting', 'loading', 'correcting'];
 function buttonLabel(status: Status) {
   switch (status) {
     case 'idle': return '校对当前页面';
-    case 'extracting': return '提取正文';
-    case 'loading': return '加载模型 (114MB)';
-    case 'correcting': return '正在校对';
+    case 'extracting': return '提取正文…';
+    case 'loading': return '加载模型 (114MB)…';
+    case 'correcting': return '正在校对…';
     case 'done': return '重新校对';
     case 'error': return '重试';
   }
@@ -60,52 +60,37 @@ export default function App() {
   const [diffs, setDiffs] = useState<Diff[]>([]);
   const [errMsg, setErrMsg] = useState('');
   const [stats, setStats] = useState<{ chars: number; timeMs: number } | null>(null);
-  const [activeIdx, setActiveIdx] = useState<number | null>(null);
-  const [applied, setApplied] = useState<Set<number>>(new Set());
-  const popRef = useRef<HTMLDivElement>(null);
-
-  // 点击气泡外部关闭
-  useEffect(() => {
-    const onDocClick = (e: MouseEvent) => {
-      if (popRef.current && !popRef.current.contains(e.target as Node)) {
-        setActiveIdx(null);
-      }
-    };
-    document.addEventListener('mousedown', onDocClick);
-    return () => document.removeEventListener('mousedown', onDocClick);
-  }, []);
+  const tabRef = useRef<chrome.tabs.Tab[]>([]);
 
   async function run() {
     setErrMsg('');
     setDiffs([]);
     setStats(null);
-    setApplied(new Set());
-    setActiveIdx(null);
     setStatus('extracting');
     try {
       const t0 = performance.now();
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       if (!tab.id) throw new Error('未找到活动标签页');
+      tabRef.current = [tab];
 
       const extracted = await chrome.tabs.sendMessage(tab.id, { type: 'extract' });
       const text: string = extracted?.text ?? '';
       if (!text) throw new Error('未能提取到页面正文');
 
       setStatus('loading');
-      // 引擎直接在 popup 跑（SW 无法初始化 onnxruntime wasm）
       const corrector = await getCorrector();
       const chunks = splitLongText(text, 510, 20);
       const chunkDiffs = await Promise.all(chunks.map(async (chunk) => {
         const res = await corrector.correct(chunk.text);
         return res.diffs;
       }));
-      const diffs = mergeDiffs(chunks, chunkDiffs);
-      setDiffs(diffs);
+      const merged = mergeDiffs(chunks, chunkDiffs);
+      setDiffs(merged);
       setStats({ chars: text.length, timeMs: Math.round(performance.now() - t0) });
       setStatus('done');
 
-      if (diffs.length > 0) {
-        await chrome.tabs.sendMessage(tab.id, { type: 'highlight', fullText: text, diffs });
+      if (merged.length > 0) {
+        await chrome.tabs.sendMessage(tab.id, { type: 'highlight', fullText: text, diffs: merged });
       }
     } catch (err) {
       setStatus('error');
@@ -113,15 +98,18 @@ export default function App() {
     }
   }
 
-  function applyFix(idx: number) {
-    const next = new Set(applied);
-    next.add(idx);
-    setApplied(next);
-    setActiveIdx(null);
+  function clearHighlights() {
+    const [tab] = tabRef.current ?? [];
+    if (tab?.id) {
+      void chrome.tabs.sendMessage(tab.id, { type: 'clear-highlights' });
+      setDiffs([]);
+      setStats(null);
+      setStatus('idle');
+    }
   }
 
-  const remaining = diffs.length - applied.size;
   const isBusy = BUSY.includes(status);
+  const remaining = diffs.length;
 
   return (
     <div className="app">
@@ -146,55 +134,20 @@ export default function App() {
       {errMsg && <div className="error">{errMsg}</div>}
 
       {status === 'done' && stats && (
-        <p className={`status${remaining === 0 ? ' status--ok' : ''}`}>
+        <p className={remaining === 0 ? 'status status--ok' : 'status'}>
           {diffs.length === 0
             ? '未发现错别字 ✓'
             : remaining === 0
               ? '全部已修正 ✓'
-              : `${remaining} 处待处理`}
-          <span> · {stats.chars} 字 · {stats.timeMs / 1000}s</span>
+              : `${remaining} 处错别字待处理`}
+          <span> · {stats.chars} 字 · {(stats.timeMs / 1000).toFixed(1)}s</span>
         </p>
       )}
 
-      {diffs.length > 0 && (
-        <div className="bubble-list">
-          {diffs.map((d, i) => {
-            const done = applied.has(i);
-            return (
-              <div key={i} className="bubble-item">
-                <button
-                  className={`bubble-trigger${done ? ' bubble-trigger--done' : ''}`}
-                  onClick={() => setActiveIdx(activeIdx === i ? null : i)}
-                  aria-expanded={activeIdx === i}
-                >
-                  <Squiggle size={14} color={done ? '#047857' : '#ef4444'} />
-                  <span className="bubble-trigger-text">
-                    <del className={done ? 'bubble-fix' : ''}>{d.original}</del>
-                    {done && <span> → <strong>{d.corrected}</strong></span>}
-                  </span>
-                </button>
-
-                {activeIdx === i && !done && (
-                  <div className="bubble" ref={popRef} role="dialog">
-                    <div className="bubble-change">
-                      <del>{d.original}</del>
-                      <span className="bubble-arrow">→</span>
-                      <strong className="bubble-new">{d.corrected}</strong>
-                    </div>
-                    <div className="bubble-meta">
-                      <span>位置 #{d.position}</span>
-                      <span className="bubble-conf">{(d.confidence * 100).toFixed(0)}%</span>
-                    </div>
-                    <div className="bubble-actions">
-                      <button className="bubble-accept" onClick={() => applyFix(i)}>采用</button>
-                      <button className="bubble-ignore" onClick={() => setActiveIdx(null)}>忽略</button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
+      {status === 'done' && diffs.length > 0 && (
+        <button className="action action--secondary" onClick={clearHighlights}>
+          清除高亮
+        </button>
       )}
 
       <footer className="footer">
