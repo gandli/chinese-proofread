@@ -12,7 +12,9 @@
     "compile": "tsc --noEmit",
     "setup:model": "bun scripts/download-model.ts",
     "test": "vitest run",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:e2e:light": "playwright test e2e/extension.spec.ts",
+    "test:screenshots": "playwright test e2e/screenshots.spec.ts"
   },
   "dependencies": {
     "onnxruntime-web": "^1.20.0",
