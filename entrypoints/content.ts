@@ -91,7 +91,7 @@ class ProofHighlighter {
     const op = this.undoStack.pop();
     if (!op) return;
     // 恢复原文
-    op.range.replaceWith(op.oldText);
+    (op.range as any).replaceWith(op.oldText);
     // 恢复高亮
     const hl = CSS.highlights.get('ps-proof') as Highlight | undefined;
     if (hl) {
@@ -107,7 +107,7 @@ class ProofHighlighter {
     const op = this.redoStack.pop();
     if (!op) return;
     // 重新应用修正
-    op.range.replaceWith(op.newText);
+    (op.range as any).replaceWith(op.newText);
     // 移除高亮
     const hl = CSS.highlights.get('ps-proof') as Highlight | undefined;
     if (hl) {
@@ -251,8 +251,8 @@ class ProofHighlighter {
   applyCorrection(entry: { node: Text; localPos: number; diff: Diff; range: Range }) {
     const { range, diff } = entry;
     const old = range.toString();
-    // Range.replaceWith 自动处理跨节点、合并相邻文本节点
-    range.replaceWith(diff.corrected);
+    // Range.replaceWith 自动处理跨节点、合并相邻文本节点 (ES2022)
+    (range as any).replaceWith(diff.corrected);
     // 记录撤销栈
     this.undoStack.push({ range, oldText: old, newText: diff.corrected, diff });
     this.redoStack.length = 0; // 新操作清空 redo 栈
