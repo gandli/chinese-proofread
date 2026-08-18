@@ -61,9 +61,9 @@ class ProofHighlighter {
   private popover: ProofPopover | null = null;
   private appliedRanges = new Set<Range>();
   private clickHandler: ((e: MouseEvent) => void) | null = null;
-  // 撤销栈
-  private undoStack: Array<{ range: Range; oldText: string; newText: string; diff: Diff }> = [];
-  private redoStack: Array<{ range: Range; oldText: string; newText: string; diff: Diff }> = [];
+  // 撤销栈：存储位置信息而非 Range（避免 replaceWith 后 Range 失效）
+  private undoStack: Array<{ node: Text; startOffset: number; endOffset: number; oldText: string; newText: string; diff: Diff }> = [];
+  private redoStack: Array<{ node: Text; startOffset: number; endOffset: number; oldText: string; newText: string; diff: Diff }> = [];
 
   constructor() {
     this.ensureStyle();
@@ -90,32 +90,38 @@ class ProofHighlighter {
   undo() {
     const op = this.undoStack.pop();
     if (!op) return;
-    // 恢复原文
-    (op.range as any).replaceWith(op.oldText);
+    // 重建 Range 并恢复原文
+    const range = document.createRange();
+    range.setStart(op.node, op.startOffset);
+    range.setEnd(op.node, op.endOffset);
+    (range as any).replaceWith(op.oldText);
     // 恢复高亮
     const hl = CSS.highlights.get('ps-proof') as Highlight | undefined;
     if (hl) {
-      hl.add(op.range);
-      this.appliedRanges.add(op.range);
+      hl.add(range);
+      this.appliedRanges.add(range);
     }
-    // 记录到 redo 栈
-    this.redoStack.push(op);
+    // 记录到 redo 栈（更新位置为当前位置）
+    this.redoStack.push({ ...op, startOffset: op.startOffset, endOffset: op.startOffset + op.oldText.length });
   }
 
   /** 重做 */
   redo() {
     const op = this.redoStack.pop();
     if (!op) return;
-    // 重新应用修正
-    (op.range as any).replaceWith(op.newText);
+    // 重建 Range 并重新应用修正
+    const range = document.createRange();
+    range.setStart(op.node, op.startOffset);
+    range.setEnd(op.node, op.endOffset);
+    (range as any).replaceWith(op.newText);
     // 移除高亮
     const hl = CSS.highlights.get('ps-proof') as Highlight | undefined;
     if (hl) {
-      hl.delete(op.range);
-      this.appliedRanges.delete(op.range);
+      hl.delete(range);
+      this.appliedRanges.delete(range);
     }
     // 记录到 undo 栈
-    this.undoStack.push(op);
+    this.undoStack.push({ ...op, startOffset: op.startOffset, endOffset: op.startOffset + op.newText.length });
   }
 
   /** 根据 popup 传来的全文+diffs，模糊匹配映射到页面文本节点并高亮 */
@@ -271,10 +277,13 @@ class ProofHighlighter {
   applyCorrection(entry: { node: Text; localPos: number; diff: Diff; range: Range }) {
     const { range, diff } = entry;
     const old = range.toString();
+    const startOffset = range.startOffset;
+    const endOffset = range.endOffset;
+    const node = range.startContainer as Text;
     // Range.replaceWith 自动处理跨节点、合并相邻文本节点 (ES2022)
     (range as any).replaceWith(diff.corrected);
-    // 记录撤销栈
-    this.undoStack.push({ range, oldText: old, newText: diff.corrected, diff });
+    // 记录撤销栈（存位置而非 Range）
+    this.undoStack.push({ node, startOffset, endOffset, oldText: old, newText: diff.corrected, diff });
     this.redoStack.length = 0; // 新操作清空 redo 栈
     // 移除该处高亮
     this.removeRangeFor(entry);
@@ -284,6 +293,9 @@ class ProofHighlighter {
   applyCorrectionInEditable(entry: { node: Text; localPos: number; diff: Diff; range: Range }, editableEl: HTMLElement) {
     const { range, diff } = entry;
     const old = range.toString();
+    const startOffset = range.startOffset;
+    const endOffset = range.endOffset;
+    const node = range.startContainer as Text;
     
     if (editableEl.tagName === 'TEXTAREA' || editableEl.tagName === 'INPUT') {
       // textarea/input: 直接操作 value
@@ -298,8 +310,8 @@ class ProofHighlighter {
       document.execCommand('insertText', false, diff.corrected);
     }
     
-    // 记录撤销栈
-    this.undoStack.push({ range, oldText: old, newText: diff.corrected, diff });
+    // 记录撤销栈（存位置而非 Range）
+    this.undoStack.push({ node, startOffset, endOffset, oldText: old, newText: diff.corrected, diff });
     this.redoStack.length = 0;
     // 移除该处高亮
     this.removeRangeFor(entry);

@@ -1,13 +1,9 @@
-/**
- * 自定义词典：行业专业词库，用于拦截/修正模型输出
- * - ignore: 忽略该词（不标记为错误）
- * - correct: 强制纠正为 correctTo
- */
+/** 自定义词典加载器（扩展环境：chrome.runtime.getURL） */
 export interface CustomDictEntry {
   term: string;
   action: 'ignore' | 'correct';
   correctTo?: string;
-  domains?: string[]; // 可选域分组，便于 UI 切换
+  domains?: string[];
 }
 
 export interface CustomDict {
@@ -25,11 +21,10 @@ export interface Diff {
 let dictCache: CustomDict | null = null;
 let dictLoaded = false;
 
-/** 加载词典（仅首次加载，随后走缓存） */
+/** 加载词典（扩展环境：chrome.runtime.getURL / fetch） */
 export async function loadCustomDict(): Promise<CustomDict> {
   if (dictLoaded && dictCache) return dictCache;
   try {
-    // 优先尝试 chrome.runtime（扩展环境）
     if (typeof chrome !== 'undefined' && chrome.runtime?.getURL) {
       const res = await fetch(chrome.runtime.getURL('custom-dict.json'));
       if (res.ok) {
@@ -38,17 +33,9 @@ export async function loadCustomDict(): Promise<CustomDict> {
         return dictCache!;
       }
     }
-    // 回退：直接读取文件（开发/测试环境）
-    // 使用 import.meta.url 定位模块文件，再推导 public 目录
-    const { readFile } = await import('node:fs/promises');
-    const moduleDir = new URL('.', import.meta.url).pathname;
-    // moduleDir: .../src/utils/ -> public 在项目根目录
-    const projectRoot = moduleDir.replace(/\/src\/utils\/$/, '');
-    const dictPath = projectRoot + '/public/custom-dict.json';
-    console.log('[custom-dict] Loading:', dictPath);
-    const content = await readFile(dictPath, 'utf-8');
-    dictCache = JSON.parse(content);
-    console.log('[custom-dict] Loaded entries:', dictCache?.entries?.length || 0);
+    // 扩展环境未命中：回退到空词典（Node 环境加载由单独模块处理）
+    console.warn('[custom-dict] chrome.runtime.getURL unavailable, using empty dict');
+    dictCache = { version: 1, entries: [] };
   } catch (e) {
     console.error('[custom-dict] Load failed:', e);
     dictCache = { version: 1, entries: [] };
@@ -97,9 +84,8 @@ export function applyCustomDict(text: string, diffs: Diff[]): Diff[] {
   const matches = findMatches(text, dictCache.entries);
   if (matches.length === 0) return diffs;
 
-  // 将 matches 转为区间集合，便于判断 diff 是否落在忽略/纠正区间内
   const ignoreRanges: Array<[number, number]> = [];
-  const correctMap = new Map<string, string>(); // key: "start-end" -> correctTo
+  const correctMap = new Map<string, string>();
 
   for (const m of matches) {
     if (m.entry.action === 'ignore') {
@@ -109,14 +95,12 @@ export function applyCustomDict(text: string, diffs: Diff[]): Diff[] {
     }
   }
 
-  // 判断 diff 是否与任一 ignore 区间相交
   function intersectsIgnore(diff: Diff): boolean {
     const dStart = diff.position;
     const dEnd = dStart + diff.original.length;
     return ignoreRanges.some(([s, e]) => !(dEnd <= s || dStart >= e));
   }
 
-  // 先过滤 ignore，再处理 correct
   const filtered = diffs.filter(d => !intersectsIgnore(d));
   const corrected = filtered.map(d => {
     const key = `${d.position}-${d.position + d.original.length}`;

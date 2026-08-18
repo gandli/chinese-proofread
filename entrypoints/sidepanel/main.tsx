@@ -86,7 +86,7 @@ function SidePanel() {
     const next = state.diffs.filter(d => d !== diff);
     setState({ ...state, diffs: next });
     saveState(next);
-    if (state.activeTabId) {
+    if (state.activeTabId != null) {
       chrome.tabs.sendMessage(state.activeTabId, { type: 'remove-highlight', diff });
     }
   };
@@ -95,19 +95,19 @@ function SidePanel() {
     const next = state.diffs.filter(d => d !== diff);
     setState({ ...state, diffs: next });
     saveState(next);
-    if (state.activeTabId) {
+    if (state.activeTabId != null) {
       chrome.tabs.sendMessage(state.activeTabId, { type: 'remove-highlight', diff });
     }
   };
 
   const handleJump = (diff: Diff) => {
-    if (state.activeTabId) {
+    if (state.activeTabId != null) {
       chrome.tabs.sendMessage(state.activeTabId, { type: 'jump-to', diff });
     }
   };
 
   const handleAcceptAll = () => {
-    if (state.activeTabId) {
+    if (state.activeTabId != null) {
       chrome.tabs.sendMessage(state.activeTabId, { type: 'clear-highlights' });
     }
     setState({ ...state, diffs: [] });
@@ -115,7 +115,7 @@ function SidePanel() {
   };
 
   const handleIgnoreAll = () => {
-    if (state.activeTabId) {
+    if (state.activeTabId != null) {
       chrome.tabs.sendMessage(state.activeTabId, { type: 'clear-highlights' });
     }
     setState({ ...state, diffs: [] });
