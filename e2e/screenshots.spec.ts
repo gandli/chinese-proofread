@@ -60,18 +60,34 @@ test('手册截图：校对全流程', async () => {
       await popup.waitForSelector('.action--busy', { timeout: 30_000 });
       await shot(popup, '02-popup-correcting.png');
 
-      // 注入模拟校对结果（绕过真实模型推理，加速截图）
-        const mockDiffs = [
-          { position: 2, original: '新', corrected: '心', confidence: 0.99 },
-          { position: 8, original: '高', corrected: '兴', confidence: 0.95 },
-        ];
-        await page.evaluate(async (diffs) => {
-          const h = (window as any).__proofHighlighter;
-          if (h) h.apply('今天新情很好，我也很高心。', diffs);
-        }, mockDiffs);
+      // 注入模拟校对结果到 popup 状态（绕过真实模型推理）
+        await popup.evaluate(() => {
+          const test = (window as any).__TEST__;
+          if (test?.setState) {
+            test.setState({
+              status: 'done',
+              diffs: [
+                { position: 2, original: '新', corrected: '心', confidence: 0.99 },
+                { position: 8, original: '高', corrected: '兴', confidence: 0.95 },
+              ],
+              stats: { chars: 24, timeMs: 5000 },
+              errMsg: '',
+            });
+          }
+        });
 
-        // 03. 校对结果（等待真实模型完成 → 状态行 + 清除高亮按钮）
-        await popup.waitForSelector('button.action--done', { timeout: 120_000 });
+        // 同时向页面发送 highlight 消息，触发页面红波浪线
+        await page.evaluate(() => {
+          const mockDiffs = [
+            { position: 2, original: '新', corrected: '心', confidence: 0.99 },
+            { position: 8, original: '高', corrected: '兴', confidence: 0.95 },
+          ];
+          const h = (window as any).__proofHighlighter;
+          if (h) h.apply('今天新情很好，我也很高心。', mockDiffs);
+        });
+
+        // 03. 校对结果（直接显示结果，不等真实模型）
+        await popup.waitForSelector('button.action--done', { timeout: 10_000 });
         await shot(popup, '03-popup-result.png');
 
     // 04. 页面高亮
@@ -86,10 +102,24 @@ test('手册截图：校对全流程', async () => {
     await shot(popup, '05-popup-idle-after-clear.png');
 
     // 06. 重新校对 → 全部已修正（无错的页面）
-    await popup.click('button.action');
-    await popup.waitForSelector('.action--busy', { timeout: 30_000 });
-    await popup.waitForSelector('button.action--done', { timeout: 180_000 });
-    await shot(popup, '06-popup-all-fixed.png');
+  await popup.click('button.action');
+  await popup.waitForSelector('.action--busy', { timeout: 30_000 });
+
+  // 注入空结果（模拟无错别字）
+  await popup.evaluate(() => {
+    const test = (window as any).__TEST__;
+    if (test?.setState) {
+      test.setState({
+        status: 'done',
+        diffs: [],
+        stats: { chars: 28, timeMs: 3000 },
+        errMsg: '',
+      });
+    }
+  });
+
+  await popup.waitForSelector('button.action--done', { timeout: 10_000 });
+  await shot(popup, '06-popup-all-fixed.png');
 
   } finally {
     await context.close();

@@ -6,9 +6,11 @@ declare module "wxt/browser" {
     | "/"
     | "/background.js"
     | "/content-scripts/content.js"
+    | "/custom-dict.json"
     | "/models/model_quantized.onnx"
     | "/models/vocab.txt"
     | "/popup.html"
+    | "/sidepanel.html"
     | "/wasm/ort-wasm-simd-threaded.jsep.mjs"
     | "/wasm/ort-wasm-simd-threaded.jsep.wasm"
   type HtmlPublicPath = Extract<PublicPath, `${string}.html`>
