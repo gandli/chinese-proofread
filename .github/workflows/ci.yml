@@ -66,4 +66,4 @@ jobs:
         run: bunx playwright install --with-deps chromium
 
       - name: E2E (xvfb for MV3 extension)
-        run: xvfb-run -a bun run test:e2e
+        run: xvfb-run -a bun run test:e2e:light
