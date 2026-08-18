@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>校对结果示例</title>
+  <link rel="stylesheet" href="../../entrypoints/popup/popup.css">
+  <style>
+    body { margin: 0; background: #ffffff; }
+    .wrap { width: 380px; margin: 0 auto; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="app">
+      <header class="header">
+        <div class="logo">
+          <svg width="20" height="10" viewBox="0 0 20 10" fill="none">
+            <path d="M1 6 q2.25 -4 4.5 0 q2.25 4 4.5 0 q2.25 -4 4.5 0 q2.25 4 4.5 0" stroke="#ef4444" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="header-text">
+          <h1>中文校对助手</h1>
+          <span class="badge"><span class="dot" />本地引擎 · 离线可用</span>
+        </div>
+      </header>
+
+      <button class="action action--done"><svg width="16" height="8" viewBox="0 0 20 10" fill="none"><path d="M1 6 q2.25 -4 4.5 0 q2.25 4 4.5 0 q2.25 -4 4.5 0 q2.25 4 4.5 0" stroke="#f87171" stroke-width="2" stroke-linecap="round"/></svg>重新校对</button>
+      <p class="status status--ok">3 处待处理 · 120 字 · 2.8s</p>
+
+      <div class="bubble-list">
+        <div class="bubble-item">
+          <button class="bubble-trigger">
+            <svg width="14" height="7" viewBox="0 0 20 10" fill="none"><path d="M1 6 q2.25 -4 4.5 0 q2.25 4 4.5 0 q2.25 -4 4.5 0 q2.25 4 4.5 0" stroke="#ef4444" stroke-width="2" stroke-linecap="round"/></svg>
+            <span class="bubble-trigger-text"><del>我以经习惯了这座城市的生活</del></span>
+          </button>
+        </div>
+        <div class="bubble-item">
+          <button class="bubble-trigger" aria-expanded="true">
+            <svg width="14" height="7" viewBox="0 0 20 10" fill="none"><path d="M1 6 q2.25 -4 4.5 0 q2.25 4 4.5 0 q2.25 -4 4.5 0 q2.25 4 4.5 0" stroke="#ef4444" stroke-width="2" stroke-linecap="round"/></svg>
+            <span class="bubble-trigger-text"><del>每天清晨的街道总是格外宁静</del></span>
+          </button>
+          <div class="bubble" role="dialog">
+            <div class="bubble-change">
+              <del>宁静</del>
+              <span class="bubble-arrow">→</span>
+              <strong class="bubble-new">安静</strong>
+            </div>
+            <div class="bubble-meta">
+              <span>位置 #2</span>
+              <span class="bubble-conf">93%</span>
+            </div>
+            <div class="bubble-actions">
+              <button class="bubble-accept">采用</button>
+              <button class="bubble-ignore">忽略</button>
+            </div>
+          </div>
+        </div>
+        <div class="bubble-item">
+          <button class="bubble-trigger bubble-trigger--done">
+            <svg width="14" height="7" viewBox="0 0 20 10" fill="none"><path d="M1 6 q2.25 -4 4.5 0 q2.25 4 4.5 0 q2.25 -4 4.5 0 q2.25 4 4.5 0" stroke="#047857" stroke-width="2" stroke-linecap="round"/></svg>
+            <span class="bubble-trigger-text"><del>他做事一向很历害</del><span> → <strong>厉害</strong></span></span>
+          </button>
+        </div>
+      </div>
+
+      <footer class="footer"><span class="dot" /> 文字不出浏览器 · 数据不上传</footer>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './popup.css';
 
 type Status = 'idle' | 'extracting' | 'loading' | 'correcting' | 'done' | 'error';
@@ -11,7 +11,7 @@ interface Diff {
 }
 
 // 校对波浪线 — 项目签名元素（与 hero SVG 同源）
-function Squiggle({ size = 20, color = '#f87171' }: { size?: number; color?: string }) {
+function Squiggle({ size = 20, color = '#ef4444' }: { size?: number; color?: string }) {
   return (
     <svg width={size} height={Math.round(size / 2)} viewBox="0 0 20 10" fill="none" aria-hidden="true">
       <path
@@ -42,12 +42,27 @@ export default function App() {
   const [diffs, setDiffs] = useState<Diff[]>([]);
   const [errMsg, setErrMsg] = useState('');
   const [stats, setStats] = useState<{ chars: number; timeMs: number } | null>(null);
+  const [activeIdx, setActiveIdx] = useState<number | null>(null);
+  const [applied, setApplied] = useState<Set<number>>(new Set());
+  const popRef = useRef<HTMLDivElement>(null);
+
+  // 点击气泡外部关闭
+  useEffect(() => {
+    const onDocClick = (e: MouseEvent) => {
+      if (popRef.current && !popRef.current.contains(e.target as Node)) {
+        setActiveIdx(null);
+      }
+    };
+    document.addEventListener('mousedown', onDocClick);
+    return () => document.removeEventListener('mousedown', onDocClick);
+  }, []);
 
   async function run() {
-    // 清空上一轮结果，避免失败重试成功后仍显示旧错误
     setErrMsg('');
     setDiffs([]);
     setStats(null);
+    setApplied(new Set());
+    setActiveIdx(null);
     setStatus('extracting');
     try {
       const t0 = performance.now();
@@ -75,6 +90,14 @@ export default function App() {
     }
   }
 
+  function applyFix(idx: number) {
+    const next = new Set(applied);
+    next.add(idx);
+    setApplied(next);
+    setActiveIdx(null);
+  }
+
+  const remaining = diffs.length - applied.size;
   const isBusy = BUSY.includes(status);
 
   return (
@@ -93,39 +116,62 @@ export default function App() {
         disabled={isBusy}
       >
         {isBusy && <span className="spinner" />}
+        <Squiggle size={16} color="#f87171" />
         {buttonLabel(status)}
       </button>
 
       {errMsg && <div className="error">{errMsg}</div>}
 
       {status === 'done' && stats && (
-        <p className={`status${diffs.length === 0 ? ' status--ok' : ''}`}>
+        <p className={`status${remaining === 0 ? ' status--ok' : ''}`}>
           {diffs.length === 0
             ? '未发现错别字 ✓'
-            : `发现 ${diffs.length} 处疑似错误，已在页面高亮`}
-          {stats && <span> · {stats.chars} 字 · {stats.timeMs / 1000}s</span>}
+            : remaining === 0
+              ? '全部已修正 ✓'
+              : `${remaining} 处待处理`}
+          <span> · {stats.chars} 字 · {stats.timeMs / 1000}s</span>
         </p>
       )}
 
       {diffs.length > 0 && (
-        <ul className="diffs">
-          {diffs.map((d, i) => (
-            <li key={i} className="diff">
-              <div className="diff-squiggle"><Squiggle size={14} /></div>
-              <div className="diff-body">
-                <div className="diff-change">
-                  <span className="orig">{d.original}</span>
-                  <span className="arrow">→</span>
-                  <span className="fix">{d.corrected}</span>
-                </div>
-                <div className="diff-meta">
-                  <span>#{d.position}</span>
-                  <span className="conf">{(d.confidence * 100).toFixed(0)}%</span>
-                </div>
+        <div className="bubble-list">
+          {diffs.map((d, i) => {
+            const done = applied.has(i);
+            return (
+              <div key={i} className="bubble-item">
+                <button
+                  className={`bubble-trigger${done ? ' bubble-trigger--done' : ''}`}
+                  onClick={() => setActiveIdx(activeIdx === i ? null : i)}
+                  aria-expanded={activeIdx === i}
+                >
+                  <Squiggle size={14} color={done ? '#047857' : '#ef4444'} />
+                  <span className="bubble-trigger-text">
+                    <del className={done ? 'bubble-fix' : ''}>{d.original}</del>
+                    {done && <span> → <strong>{d.corrected}</strong></span>}
+                  </span>
+                </button>
+
+                {activeIdx === i && !done && (
+                  <div className="bubble" ref={popRef} role="dialog">
+                    <div className="bubble-change">
+                      <del>{d.original}</del>
+                      <span className="bubble-arrow">→</span>
+                      <strong className="bubble-new">{d.corrected}</strong>
+                    </div>
+                    <div className="bubble-meta">
+                      <span>位置 #{d.position}</span>
+                      <span className="bubble-conf">{(d.confidence * 100).toFixed(0)}%</span>
+                    </div>
+                    <div className="bubble-actions">
+                      <button className="bubble-accept" onClick={() => applyFix(i)}>采用</button>
+                      <button className="bubble-ignore" onClick={() => setActiveIdx(null)}>忽略</button>
+                    </div>
+                  </div>
+                )}
               </div>
-            </li>
-          ))}
-        </ul>
+            );
+          })}
+        </div>
       )}
 
       <footer className="footer">
