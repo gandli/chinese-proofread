@@ -200,8 +200,28 @@ class ProofHighlighter {
     if (!range) { this.popover?.hide(); return; }
     const entry = this.findDiffForRange(range);
     if (!entry) { this.popover?.hide(); return; }
-    const rect = range.getBoundingClientRect();
-    this.popover?.show(entry.diff, rect, () => this.applyCorrection(entry));
+    
+    // 检查是否在可编辑元素内
+    const editableEl = this.isInEditable(range.startContainer);
+    if (editableEl) {
+      // 可编辑元素：使用原生 execCommand 或直接操作 value
+      this.applyCorrectionInEditable(entry, editableEl);
+    } else {
+      const rect = range.getBoundingClientRect();
+      this.popover?.show(entry.diff, rect, () => this.applyCorrection(entry));
+    }
+  }
+
+  /** 判断节点是否在可编辑元素内（contenteditable/textarea/input） */
+  private isInEditable(node: Node): HTMLElement | null {
+    let el = node.nodeType === Node.TEXT_NODE ? node.parentElement : node as Element;
+    while (el) {
+      if ((el as HTMLElement).isContentEditable || el.tagName === 'TEXTAREA' || el.tagName === 'INPUT') {
+        return el as HTMLElement;
+      }
+      el = el.parentElement;
+    }
+    return null;
   }
 
   /** 查找包含 caretRange 的高亮 range */
@@ -256,6 +276,31 @@ class ProofHighlighter {
     // 记录撤销栈
     this.undoStack.push({ range, oldText: old, newText: diff.corrected, diff });
     this.redoStack.length = 0; // 新操作清空 redo 栈
+    // 移除该处高亮
+    this.removeRangeFor(entry);
+  }
+
+  /** 可编辑元素内的修正（contenteditable/textarea/input） */
+  applyCorrectionInEditable(entry: { node: Text; localPos: number; diff: Diff; range: Range }, editableEl: HTMLElement) {
+    const { range, diff } = entry;
+    const old = range.toString();
+    
+    if (editableEl.tagName === 'TEXTAREA' || editableEl.tagName === 'INPUT') {
+      // textarea/input: 直接操作 value
+      const textarea = editableEl as HTMLTextAreaElement | HTMLInputElement;
+      const start = range.startOffset;
+      const end = range.endOffset;
+      textarea.value = textarea.value.slice(0, start) + diff.corrected + textarea.value.slice(end);
+      // 触发 input 事件
+      textarea.dispatchEvent(new Event('input', { bubbles: true }));
+    } else if ((editableEl as HTMLElement).isContentEditable) {
+      // contenteditable: 使用 execCommand 或直接操作
+      document.execCommand('insertText', false, diff.corrected);
+    }
+    
+    // 记录撤销栈
+    this.undoStack.push({ range, oldText: old, newText: diff.corrected, diff });
+    this.redoStack.length = 0;
     // 移除该处高亮
     this.removeRangeFor(entry);
   }

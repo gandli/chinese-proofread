@@ -14,6 +14,7 @@ export default defineConfig({
     side_panel: {
       default_path: 'sidepanel.html',
     },
+    options_page: 'options.html',
   },
   vite: () => ({
     build: {
