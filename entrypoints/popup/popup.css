@@ -1,16 +1,18 @@
 :root {
-  --bg: #0b1220;
-  --surface: #131c2e;
-  --surface-2: #1a2440;
-  --border: #24304a;
-  --text: #e6ebf4;
-  --muted: #8a97ad;
-  --accent: #f87171;
-  --green: #34d399;
-  --amber: #fbbf24;
+  --bg: #ffffff;
+  --surface: #f4f6fa;
+  --surface-2: #e8ecf4;
+  --border: #d5dce6;
+  --text: #1a2233;
+  --muted: #5a6a82;
+  --accent: #dc2626;
+  --green: #047857;
+  --amber: #b45309;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
+
+svg { vertical-align: middle; }
 
 body {
   background: var(--bg);
@@ -75,35 +77,39 @@ body {
 /* ── Primary action ─────────────────── */
 .action {
   width: 100%;
-  padding: 11px;
+  padding: 11px 14px;
   font-size: 14px;
   font-weight: 500;
-  color: #0b1220;
-  background: #e6ebf4;
+  color: #ffffff;
+  background: #1a2233;
   border: none;
   border-radius: 9px;
   cursor: pointer;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   transition: background 0.15s ease, transform 0.05s ease;
   margin-bottom: 6px;
 }
 
-.action:hover:not(:disabled) { background: #ffffff; }
+.action:hover:not(:disabled) { background: #2a3650; }
 .action:active:not(:disabled) { transform: scale(0.99); }
-.action:disabled { opacity: 0.55; cursor: default; }
+.action:disabled { opacity: 0.5; cursor: default; }
 
-.action--busy { color: var(--surface-2); }
+.action--busy { opacity: 0.8; }
 
-.action--done { background: var(--green); color: #0b1220; }
-.action--done:hover:not(:disabled) { background: #2ee6a0; }
-.action--error { background: var(--accent); color: #0b1220; }
-.action--error:hover:not(:disabled) { background: #ff8b8b; }
+.action--done { background: var(--green); color: #ffffff; }
+.action--done:hover:not(:disabled) { background: #047857; }
+.action--error { background: var(--accent); color: #ffffff; }
+.action--error:hover:not(:disabled) { background: #dc2626; }
 
 .spinner {
   display: inline-block;
   width: 13px;
   height: 13px;
-  border: 2px solid rgba(11, 18, 32, 0.3);
-  border-top-color: var(--surface-2);
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
   border-radius: 50%;
   vertical-align: -2px;
   margin-right: 7px;
@@ -123,68 +129,125 @@ body {
 
 .error {
   font-size: 12.5px;
-  color: var(--accent);
-  background: rgba(248, 113, 113, 0.08);
-  border: 1px solid rgba(248, 113, 113, 0.25);
+  color: #dc2626;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
   border-radius: 8px;
   padding: 9px 11px;
   margin: 4px 0 8px;
   line-height: 1.4;
 }
 
-/* ── Diff list ──────────────────────── */
-.diffs {
-  list-style: none;
-  max-height: 280px;
-  overflow-y: auto;
+/* ── 气泡列表 ──────────────────────── */
+.bubble-list {
   display: flex;
   flex-direction: column;
   gap: 6px;
   margin-top: 4px;
+  max-height: 320px;
+  overflow-y: auto;
 }
 
-.diff {
+.bubble-item { position: relative; }
+
+.bubble-trigger {
+  width: 100%;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 8px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 8px 10px;
-}
-
-.diff-squiggle { flex: 0 0 auto; margin-top: 3px; }
-
-.diff-body { flex: 1; min-width: 0; }
-
-.diff-change {
+  padding: 9px 11px;
   font-size: 13.5px;
-  line-height: 1.3;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.12s ease;
 }
 
-.diff-change .orig {
-  color: var(--muted);
-  text-decoration: line-through;
-  text-decoration-color: var(--accent);
+.bubble-trigger:hover { border-color: var(--accent); }
+.bubble-trigger--done { border-color: var(--green); background: #f0fdf9; }
+
+.bubble-trigger-text { flex: 1; min-width: 0; }
+.bubble-trigger-text del { color: var(--muted); text-decoration-color: var(--accent); }
+.bubble-fix { color: var(--green); font-weight: 600; }
+
+/* ── 气泡弹窗 ──────────────────────── */
+.bubble {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  z-index: 10;
 }
 
-.diff-change .arrow { color: var(--muted); margin: 0 5px; }
-
-.diff-change .fix {
-  color: var(--green);
-  font-weight: 600;
+.bubble::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 16px;
+  width: 10px;
+  height: 10px;
+  background: var(--bg);
+  border-left: 1px solid var(--border);
+  border-top: 1px solid var(--border);
+  transform: rotate(45deg);
 }
 
-.diff-meta {
+.bubble-change {
+  font-size: 14px;
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+.bubble-change del { color: var(--muted); text-decoration-color: var(--accent); }
+.bubble-arrow { color: var(--muted); margin: 0 6px; }
+.bubble-new { color: var(--green); font-weight: 600; }
+
+.bubble-meta {
   font-family: ui-monospace, "SF Mono", Menlo, monospace;
   font-size: 11px;
   color: var(--muted);
-  margin-top: 3px;
   display: flex;
-  gap: 8px;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
-.diff-meta .conf { color: var(--amber); }
+.bubble-conf { color: var(--amber); }
+
+.bubble-actions { display: flex; gap: 8px; }
+
+.bubble-accept {
+  flex: 1;
+  padding: 7px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #ffffff;
+  background: var(--green);
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+.bubble-accept:hover { background: #047857; }
+
+.bubble-ignore {
+  padding: 7px 14px;
+  font-size: 13px;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+.bubble-ignore:hover { background: var(--surface-2); }
 
 /* ── Footer ─────────────────────────── */
 .footer {

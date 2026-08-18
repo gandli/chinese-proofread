@@ -8,6 +8,9 @@ export default defineConfig({
     description: '本地 AI 中文长文智能校对 - 离线可用',
     permissions: ['storage'],
     host_permissions: ['<all_urls>'],
+    content_security_policy: {
+      extension_pages: "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'",
+    },
   },
   vite: () => ({
     build: {
