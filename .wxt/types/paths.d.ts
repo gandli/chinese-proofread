@@ -9,6 +9,8 @@ declare module "wxt/browser" {
     | "/models/model_quantized.onnx"
     | "/models/vocab.txt"
     | "/popup.html"
+    | "/wasm/ort-wasm-simd-threaded.jsep.mjs"
+    | "/wasm/ort-wasm-simd-threaded.jsep.wasm"
   type HtmlPublicPath = Extract<PublicPath, `${string}.html`>
   export interface WxtRuntime {
     getURL(path: PublicPath): string;

@@ -25,7 +25,10 @@ export class MacBertCorrector {
     const [ort] = await Promise.all([import('onnxruntime-web'), this.loadVocab()]);
     // MV3 service worker 无 XMLHttpRequest/动态 import：单线程 wasm + 显式 wasm 路径
     ort.env.wasm.numThreads = 1;
-    ort.env.wasm.wasmPaths = chrome.runtime.getURL('wasm/');
+    // 仅浏览器扩展环境需要 wasmPaths（bun/node 的 ort.node 原生版直接读文件；外部已设则不覆盖）
+    if (!ort.env.wasm.wasmPaths && typeof chrome !== 'undefined' && chrome.runtime?.getURL) {
+      ort.env.wasm.wasmPaths = chrome.runtime.getURL('wasm/');
+    }
     this.session = await ort.InferenceSession.create(this.modelUrl, {
       executionProviders: ['wasm'],
       graphOptimizationLevel: 'all',
@@ -33,9 +36,18 @@ export class MacBertCorrector {
   }
 
   private async loadVocab(): Promise<void> {
-    const text = await (await fetch(this.vocabUrl)).text();
+    const text = await this.fetchText(this.vocabUrl);
     this.vocab = text.trim().split('\n');
     this.vocab.forEach((t, i) => this.invVocab.set(t, i));
+  }
+
+  // 浏览器内用 fetch（扩展 URL）；Node/bun 用文件系统（scripts/* demo）
+  private async fetchText(url: string): Promise<string> {
+    if (typeof process !== 'undefined' && process.versions?.node && url.startsWith('/')) {
+      const { readFile } = await import('node:fs/promises');
+      return await readFile(url, 'utf8');
+    }
+    return (await fetch(url)).text();
   }
 
   tokenize(text: string): number[] {
