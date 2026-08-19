@@ -120,6 +120,9 @@ class ProofHighlighter {
     ).__proofHighlighter = this;
   }
 
+  /**
+   * 处理键盘事件：Ctrl+Z 撤销，Ctrl+Shift+Z/Y 重做
+   */
   private handleKeydown(e: KeyboardEvent) {
     if ((e.ctrlKey || e.metaKey) && e.key === "z" && !e.shiftKey) {
       e.preventDefault();
@@ -180,7 +183,9 @@ class ProofHighlighter {
     });
   }
 
-  /** 根据 popup 传来的全文+diffs，模糊匹配映射到页面文本节点并高亮 */
+  /**
+   * 根据 popup 传来的全文+diffs，模糊匹配映射到页面文本节点并高亮
+   */
   apply(fullText: string, diffs: Diff[]) {
     this.clearAll();
     if (!diffs.length) return;
@@ -565,6 +570,9 @@ class ProofHighlighter {
     }
   }
 
+  /**
+   * 清除所有高亮与关联数据
+   */
   clearAll() {
     CSS.highlights.delete("ps-proof");
     this.appliedRanges.clear();
