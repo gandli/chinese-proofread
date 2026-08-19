@@ -21,7 +21,7 @@ async function getCorrector(): Promise<MacBertCorrector> {
   return (corrector = await correctorInit);
 }
 
-type Status = 'idle' | 'extracting' | 'loading' | 'correcting' | 'done' | 'error';
+type Status = 'idle' | 'extracting' | 'loading' | 'correcting' | 'done' | 'error' | 'permission-denied';
 
 interface Diff {
   position: number;
@@ -53,6 +53,7 @@ function buttonLabel(status: Status) {
     case 'correcting': return '正在校对…';
     case 'done': return '重新校对';
     case 'error': return '重试';
+    case 'permission-denied': return '授权后重试';
   }
 }
 
@@ -98,7 +99,11 @@ export default function App() {
       const hasPermission = await chrome.permissions.contains({ origins: ['<all_urls>'] });
       if (!hasPermission) {
         const granted = await chrome.permissions.request({ origins: ['<all_urls>'] });
-        if (!granted) throw new Error('需要授权访问当前页面才能校对');
+        if (!granted) {
+          setErrMsg('');
+          setStatus('permission-denied');
+          return;
+        }
       }
 
       const extracted = await chrome.tabs.sendMessage(tab.id, { type: 'extract' });
@@ -177,6 +182,12 @@ export default function App() {
       </button>
 
       {errMsg && <div className="error text-[12.5px] text-error bg-error-bg border border-error-border rounded-lg px-[11px] py-2.5 my-1.5 leading-normal">{errMsg}</div>}
+
+      {status === 'permission-denied' && (
+        <div className="permission-denied text-[12.5px] text-muted bg-muted/20 border border-border rounded-lg px-[11px] py-2.5 my-1.5 leading-normal">
+          需要授权访问当前页面才能校对。请点击上方按钮「授权后重试」重新申请权限。
+        </div>
+      )}
 
       {status === 'done' && stats && (
         <p className={cn('status text-[12.5px] text-muted py-0.5 pb-2', remaining === 0 && 'text-success')}>
