@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
+import { isFromThisExtension } from '../../src/utils/extension-messaging';
 import './sidepanel.css';
 
 interface Diff {
@@ -61,7 +62,7 @@ function SidePanel() {
   useEffect(() => {
     const handleMessage = (msg: any, sender: chrome.runtime.MessageSender) => {
       // 验证发送者：仅接受扩展自身消息
-      if (sender.id !== chrome.runtime.id) return;
+      if (!isFromThisExtension(sender)) return;
       if (msg?.type === 'sync-diffs') {
         setState({
           diffs: msg.diffs,

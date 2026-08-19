@@ -2,6 +2,8 @@
 // 参照 Proofly 模式：高亮不污染 DOM（::highlight()），修正原地替换 + 撤销
 import { Readability } from '@mozilla/readability';
 
+import { isFromThisExtension } from '../src/utils/extension-messaging';
+
 export default defineContentScript({
   matches: ['<all_urls>'],
   runAt: 'document_idle',
@@ -13,7 +15,7 @@ export default defineContentScript({
 
     chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       // 验证发送者：仅接受扩展自身消息，防止恶意页面注入
-      if (sender.id !== chrome.runtime.id) return;
+      if (!isFromThisExtension(sender)) return;
       if (msg?.type === 'extract') {
         const doc = document.cloneNode(true) as Document;
         const article = new Readability(doc).parse();

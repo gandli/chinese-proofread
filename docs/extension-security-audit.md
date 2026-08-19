@@ -89,8 +89,8 @@
 - [x] 权限最小化（`optional_host_permissions` + 运行时 `permissions.request()`）
 - [x] 拒绝授权友好 UI（`permission-denied` 状态 + 「授权后重试」）
 - [x] CSP 例外说明材料（`wasm-unsafe-eval` 仅用本地 WASM 推理）
-- [x] 消息发送者验证（3 处 `sender.id === chrome.runtime.id`）
-- [x] 无审计/内部文档打包（`docs/extension-review-report.md`）
+- [x] 消息发送者验证（3 处 `sender.id === chrome.runtime.id` → 统一 `isFromThisExtension(sender)`）
+- [x] 无审计/内部文档打包（`docs/extension-security-audit.md`）
 - [x] 截图（`docs/guide/screenshots/01-07.png`）
 - [x] 测试包（`bun run zip` → `.output/chrome-mv3.zip`）
 - [x] CI 全绿（qa/e2e/GitGuardian/Sourcery）
