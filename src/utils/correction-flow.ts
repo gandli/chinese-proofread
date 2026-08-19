@@ -6,13 +6,7 @@ import { loadCustomDict, applyCustomDict } from "./custom-dict";
 import type { Diff } from "../types";
 
 export type ProofStatus =
-  | "idle"
-  | "extracting"
-  | "loading"
-  | "correcting"
-  | "done"
-  | "error"
-  | "permission-denied";
+  "idle" | "extracting" | "loading" | "done" | "error" | "permission-denied";
 
 export interface CorrectionStats {
   chars: number;
@@ -30,15 +24,25 @@ let correctorInit: Promise<MacBertCorrector> | null = null;
 
 export async function getCorrector(): Promise<MacBertCorrector> {
   if (corrector) return corrector;
-  correctorInit ??= (async () => {
-    const c = new MacBertCorrector(
-      chrome.runtime.getURL("models/model_quantized.onnx"),
-      chrome.runtime.getURL("models/vocab.txt"),
-    );
-    await c.init();
-    return c;
-  })();
-  return (corrector = await correctorInit);
+  if (!correctorInit) {
+    const init = (async () => {
+      const c = new MacBertCorrector(
+        chrome.runtime.getURL("models/model_quantized.onnx"),
+        chrome.runtime.getURL("models/vocab.txt"),
+      );
+      await c.init();
+      return c;
+    })();
+    correctorInit = init;
+    try {
+      corrector = await init;
+    } catch (err) {
+      // 初始化失败：重置 Promise，允许下次调用重试（避免永久拒绝）
+      correctorInit = null;
+      throw err;
+    }
+  }
+  return corrector!;
 }
 
 /** 主校对流程：返回正文文本 + 修正 diff + 统计；权限被拒抛 "permission-denied" */

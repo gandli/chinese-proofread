@@ -47,7 +47,7 @@ function Squiggle({
   );
 }
 
-const BUSY: readonly ProofStatus[] = ["extracting", "loading", "correcting"];
+const BUSY: readonly ProofStatus[] = ["extracting", "loading"];
 
 function buttonLabel(status: ProofStatus) {
   switch (status) {
@@ -57,8 +57,6 @@ function buttonLabel(status: ProofStatus) {
       return "提取正文…";
     case "loading":
       return "加载模型 (114MB)…";
-    case "correcting":
-      return "正在校对…";
     case "done":
       return "重新校对";
     case "error":

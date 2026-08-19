@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import {
   runCorrection,
+  getCorrector,
   PermissionDeniedError,
   resetCorrector,
 } from "./correction-flow";
@@ -63,5 +64,30 @@ describe("runCorrection", () => {
   it("未提取到正文：抛 Error", async () => {
     sendMessage.mockResolvedValue({ text: "" });
     await expect(runCorrection(1)).rejects.toThrow("未能提取到页面正文");
+  });
+});
+
+describe("getCorrector", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    resetCorrector();
+    getURL.mockReturnValue("chrome-extension://x/models/model_quantized.onnx");
+  });
+
+  it("初始化失败后可重试", async () => {
+    // 首次 init 失败
+    const { MacBertCorrector } = await import("../engines/macbert");
+    const mock = MacBertCorrector as unknown as ReturnType<typeof vi.fn>;
+    mock.mockImplementationOnce(() => ({
+      init: vi.fn().mockRejectedValue(new Error("model load failed")),
+    }));
+    await expect(getCorrector()).rejects.toThrow("model load failed");
+
+    // 重置后重试成功
+    mock.mockImplementation(() => ({
+      init: vi.fn().mockResolvedValue(undefined),
+    }));
+    const c = await getCorrector();
+    expect(c).toBeTruthy();
   });
 });
