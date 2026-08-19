@@ -1,18 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { createRoot } from "react-dom/client";
+import type { CustomDictEntry, CustomDict } from "../../src/utils/custom-dict";
 import "./options.css";
-
-interface CustomDictEntry {
-  term: string;
-  action: "ignore" | "correct";
-  correctTo?: string;
-  domains?: string[];
-}
-
-interface CustomDict {
-  version: number;
-  entries: CustomDictEntry[];
-}
 
 interface TestHook {
   setState: (s: Partial<CustomDict>) => void;
