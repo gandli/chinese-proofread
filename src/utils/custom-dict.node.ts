@@ -1,7 +1,6 @@
 /** 自定义词典加载器（Node 环境：文件系统读取，仅用于测试/开发） */
-/* eslint-disable @typescript-eslint/no-var-requires */
-import { readFile } from 'node:fs/promises';
-import { CustomDict, CustomDictEntry, Diff } from './custom-dict';
+import { readFile } from "node:fs/promises";
+import { CustomDict, CustomDictEntry, Diff } from "./custom-dict";
 
 let nodeDictCache: CustomDict | null = null;
 
@@ -9,14 +8,19 @@ let nodeDictCache: CustomDict | null = null;
 export async function loadCustomDictNode(): Promise<CustomDict> {
   if (nodeDictCache) return nodeDictCache;
   try {
-    const moduleDir = new URL('.', import.meta.url).pathname;
-    const projectRoot = moduleDir.replace(/\/src\/utils\/$/, '');
-    const dictPath = projectRoot + '/public/custom-dict.json';
-    const content = await readFile(dictPath, 'utf-8');
+    const moduleDir = new URL(".", import.meta.url).pathname;
+    const projectRoot = moduleDir.replace(/\/src\/utils\/$/, "");
+    const dictPath = projectRoot + "/public/custom-dict.json";
+    const content = await readFile(dictPath, "utf-8");
     nodeDictCache = JSON.parse(content);
-    console.log('[custom-dict-node] Loaded entries:', nodeDictCache?.entries?.length || 0);
+    // eslint-disable-next-line no-console -- test/dev logging
+    console.log(
+      "[custom-dict-node] Loaded entries:",
+      nodeDictCache?.entries?.length || 0,
+    );
   } catch (e) {
-    console.error('[custom-dict-node] Load failed:', e);
+    // eslint-disable-next-line no-console -- test/dev logging
+    console.error("[custom-dict-node] Load failed:", e);
     nodeDictCache = { version: 1, entries: [] };
   }
   return nodeDictCache!;
@@ -32,9 +36,9 @@ export function applyCustomDictNode(text: string, diffs: Diff[]): Diff[] {
   const correctMap = new Map<string, string>();
 
   for (const m of matches) {
-    if (m.entry.action === 'ignore') {
+    if (m.entry.action === "ignore") {
       ignoreRanges.push([m.start, m.end]);
-    } else if (m.entry.action === 'correct' && m.entry.correctTo) {
+    } else if (m.entry.action === "correct" && m.entry.correctTo) {
       correctMap.set(`${m.start}-${m.end}`, m.entry.correctTo);
     }
   }
@@ -45,8 +49,8 @@ export function applyCustomDictNode(text: string, diffs: Diff[]): Diff[] {
     return ignoreRanges.some(([s, e]) => !(dEnd <= s || dStart >= e));
   }
 
-  const filtered = diffs.filter(d => !intersectsIgnore(d));
-  const corrected = filtered.map(d => {
+  const filtered = diffs.filter((d) => !intersectsIgnore(d));
+  const corrected = filtered.map((d) => {
     const key = `${d.position}-${d.position + d.original.length}`;
     if (correctMap.has(key)) {
       return { ...d, corrected: correctMap.get(key)! };
@@ -57,8 +61,12 @@ export function applyCustomDictNode(text: string, diffs: Diff[]): Diff[] {
 }
 
 /** 最长前缀匹配 (Node 版本) */
-export function findMatchesNode(text: string, entries: CustomDictEntry[]): Array<{ entry: CustomDictEntry; start: number; end: number }> {
-  const matches: Array<{ entry: CustomDictEntry; start: number; end: number }> = [];
+export function findMatchesNode(
+  text: string,
+  entries: CustomDictEntry[],
+): Array<{ entry: CustomDictEntry; start: number; end: number }> {
+  const matches: Array<{ entry: CustomDictEntry; start: number; end: number }> =
+    [];
   let i = 0;
   while (i < text.length) {
     let best: { entry: CustomDictEntry; len: number } | null = null;

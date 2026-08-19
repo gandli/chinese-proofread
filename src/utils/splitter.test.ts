@@ -53,12 +53,18 @@ describe("splitLongText", () => {
   });
 
   it("参数校验：overlap 必须 >= 0", () => {
-    expect(() => splitLongText("测试", 100, -1)).toThrow("overlap must be >= 0");
+    expect(() => splitLongText("测试", 100, -1)).toThrow(
+      "overlap must be >= 0",
+    );
   });
 
   it("参数校验：overlap 必须 < maxChars", () => {
-    expect(() => splitLongText("测试", 10, 10)).toThrow("overlap must be < maxChars");
-    expect(() => splitLongText("测试", 10, 15)).toThrow("overlap must be < maxChars");
+    expect(() => splitLongText("测试", 10, 10)).toThrow(
+      "overlap must be < maxChars",
+    );
+    expect(() => splitLongText("测试", 10, 15)).toThrow(
+      "overlap must be < maxChars",
+    );
   });
 
   it("不产生空 chunk", () => {

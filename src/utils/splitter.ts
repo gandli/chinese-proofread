@@ -12,7 +12,9 @@ function assertInBounds(text: string, offset: number, length: number): void {
     throw new RangeError(`offset ${offset} out of bounds [0, ${text.length}]`);
   }
   if (length < 0 || offset + length > text.length) {
-    throw new RangeError(`slice [${offset}, ${offset + length}] exceeds text length ${text.length}`);
+    throw new RangeError(
+      `slice [${offset}, ${offset + length}] exceeds text length ${text.length}`,
+    );
   }
 }
 
@@ -40,9 +42,9 @@ export function splitLongText(
   maxChars = 510,
   overlap = 20,
 ): SplitChunk[] {
-  if (maxChars <= 0) throw new RangeError('maxChars must be > 0');
-  if (overlap < 0) throw new RangeError('overlap must be >= 0');
-  if (overlap >= maxChars) throw new RangeError('overlap must be < maxChars');
+  if (maxChars <= 0) throw new RangeError("maxChars must be > 0");
+  if (overlap < 0) throw new RangeError("overlap must be >= 0");
+  if (overlap >= maxChars) throw new RangeError("overlap must be < maxChars");
   if (text.length === 0) return [];
 
   const sentences = chineseSplitSentences(text);
@@ -116,7 +118,9 @@ export function mergeDiffs(
   >,
 ) {
   if (chunks.length !== chunkDiffs.length) {
-    throw new RangeError(`chunks (${chunks.length}) and chunkDiffs (${chunkDiffs.length}) length mismatch`);
+    throw new RangeError(
+      `chunks (${chunks.length}) and chunkDiffs (${chunkDiffs.length}) length mismatch`,
+    );
   }
   const merged: (typeof chunkDiffs)[number] = [];
   for (let i = 0; i < chunks.length; i++) {

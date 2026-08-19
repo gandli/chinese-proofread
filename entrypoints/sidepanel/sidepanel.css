@@ -1,8 +1,13 @@
 /* Side Panel 样式 */
-@import '../../src/styles/global.css';
+@import "../../src/styles/global.css";
 
 /* 减少动效偏好 */
 @media (prefers-reduced-motion: reduce) {
-  .diff-item { transition: none; }
-  .btn { transform: none !important; transition: none !important; }
+  .diff-item {
+    transition: none;
+  }
+  .btn {
+    transform: none !important;
+    transition: none !important;
+  }
 }

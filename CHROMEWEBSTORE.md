@@ -14,6 +14,7 @@
 中文校对助手是一个专为中文写作场景设计的浏览器扩展，采用本地离线 AI 模型（MacBERT4CSC Q8，114MB）在浏览器端直接推理，无需联网、无数据上传，保护隐私。
 
 **核心功能**
+
 - **红波浪浪线高亮**：使用 CSS Custom Highlights (::highlight) 非侵入式标记错误，不污染页面 DOM，性能优异
 - **点击即用**：点击红波浪线 → 原生 Popover API 气泡 → 采纳/忽略/撤销，操作直观流畅
 - **原地修正**：Range.replaceWith (ES2022) 自动处理跨节点合并相邻文本节点
@@ -23,6 +24,7 @@
 - **行业词库管理**：Options 页面可视化增删改查、多域标签过滤、JSON 导入导出、实时生效无需重载
 
 **工作流程**
+
 1. 安装扩展后，在任意网页点击扩展图标或打开侧边栏
 2. 点击"开始校对"，模型在本地 WebGPU 分段推理（约 3-8 秒）
 3. 页面显示红色波浪线下划，点击任一处 → 气泡显示原词/纠正词/置信度
@@ -32,11 +34,13 @@
 7. 撤销重做按钮或 Ctrl+ `Ctrl+Z` / `Ctrl+Shift+Z` 随时撤销/恢复
 
 **隐私与权限说明**
+
 - 仅使用 `storage` 权限保存词库配置，`sidePanel` 权限打开侧边栏
 - 所有数据存储在浏览器本地，不上传任何云端
 - 模型文件（119MB ONNX + 词表）随扩展打包，完全离线推理
 
 **适用场景**
+
 - 烟草/稿件/邮件/文档的中文校对
 - 烟草行业专业术语（烟丝/焦油量/卷烟/钢印/喷码/专卖/稽查/零售户等）防误报
 - 法律/医疗/金融/科技等领域专业文档的术语纠正
@@ -52,26 +56,26 @@ Chinese (Simplified)
 
 ## Graphics & Assets
 
-| Asset | Dimensions | Status | Filename |
-|-------|------------|--------|----------|
-| Store Icon | 128×128 PNG | ✅ Ready | assets/icon-128.png |
-| Screenshot 1 | 1280×800 | ✅ Ready | screenshots/01-popup-idle.png |
-| Screenshot 2 | 1280×800 | ✅ Ready | screenshots/02-popup-correcting.png |
-| Screenshot 3 | 1280×800 | ✅ Ready | screenshots/03-popup-result.png |
-| Screenshot 4 | 1280×800 | ✅ Ready | screenshots/04-page-highlight.png |
-| Screenshot 5 | 1280×800 | ✅ Ready | screenshots/05-sidepanel.png |
-| Screenshot 6 | 1280×800 | ✅ Ready | screenshots/06-popup-idle-after-clear.png |
-| Screenshot 7 | 1280×800 | ✅ Ready | screenshots/07-options.png |
-| Promo Tile | 440×280 | ⬜ Not created | |
-| Marquee Promo Tile | 1400×560 | ⬜ Not created | |
+| Asset              | Dimensions  | Status         | Filename                                  |
+| ------------------ | ----------- | -------------- | ----------------------------------------- |
+| Store Icon         | 128×128 PNG | ✅ Ready       | assets/icon-128.png                       |
+| Screenshot 1       | 1280×800    | ✅ Ready       | screenshots/01-popup-idle.png             |
+| Screenshot 2       | 1280×800    | ✅ Ready       | screenshots/02-popup-correcting.png       |
+| Screenshot 3       | 1280×800    | ✅ Ready       | screenshots/03-popup-result.png           |
+| Screenshot 4       | 1280×800    | ✅ Ready       | screenshots/04-page-highlight.png         |
+| Screenshot 5       | 1280×800    | ✅ Ready       | screenshots/05-sidepanel.png              |
+| Screenshot 6       | 1280×800    | ✅ Ready       | screenshots/06-popup-idle-after-clear.png |
+| Screenshot 7       | 1280×800    | ✅ Ready       | screenshots/07-options.png                |
+| Promo Tile         | 440×280     | ⬜ Not created |                                           |
+| Marquee Promo Tile | 1400×560    | ⬜ Not created |                                           |
 
 ## Permissions Justification
 
-| Permission | Type | Justification |
-|----------|------|---------------|
-| storage | permissions | 保存用户词库配置、撤销栈状态、同步侧边栏数据，无需服务器同步 |
-| sidePanel | permissions | 打开侧边栏显示错误列表、批量操作、跳转定位 |
-| host_permissions: <all_urls> | host_permissions | 在任意网页提取正文、高亮错误、点击气泡修正、编辑器原地修正 |
+| Permission                   | Type             | Justification                                                |
+| ---------------------------- | ---------------- | ------------------------------------------------------------ |
+| storage                      | permissions      | 保存用户词库配置、撤销栈状态、同步侧边栏数据，无需服务器同步 |
+| sidePanel                    | permissions      | 打开侧边栏显示错误列表、批量操作、跳转定位                   |
+| host_permissions: <all_urls> | host_permissions | 在任意网页提取正文、高亮错误、点击气泡修正、编辑器原地修正   |
 
 ## Privacy & Data Use
 
@@ -79,19 +83,23 @@ Chinese (Simplified)
 No
 
 **Data Use Certification**
+
 - ✅ Data is NOT sold to third parties
 - ✅ Data is NOT used for purposes unrelated to the extension's core functionality
 - ✅ Data is NOT used for creditworthiness or lending purposes
 
 ## Privacy Policy
+
 **Privacy Policy URL**
 https://gandli.github.io/chinese-proofread/privacy-policy.html
 
 ## Distribution
+
 **Visibility**: Public
 **Regions**: All regions
 
 ## Developer Info
+
 **Publisher Name**: gandli
 **Contact Email**: gandli@outlook.com
 **Support URL**: https://github.com/gandli/chinese-proofread/issues
@@ -99,21 +107,23 @@ https://gandli.github.io/chinese-proofread/privacy-policy.html
 
 ## Version History
 
-| Version | Date | Changes | Status |
-|---------|------|---------|--------|
-| 0.1.0 | 2026-08-19 | 初版发布：Proofly 风格重构 + Side Panel + 行业词库 + 撤销重做 + 编辑器支持 + 使用手册截图 | Draft |
+| Version | Date       | Changes                                                                                   | Status |
+| ------- | ---------- | ----------------------------------------------------------------------------------------- | ------ |
+| 0.1.0   | 2026-08-19 | 初版发布：Proofly 风格重构 + Side Panel + 行业词库 + 撤销重做 + 编辑器支持 + 使用手册截图 | Draft  |
 
 ## Review Notes
 
 ### Known Issues / Limitations
+
 - 模型体积较大（119MB ONNX + 词表 + WASM），首次加载需下载
 - 仅支持 Chromium 内核浏览器（Chrome/Edge/Brave 等）
 - 离线模型推理需 WebGPU 支持，旧设备回退 WASM 会较慢
 - 词库功能需手动导入/导出，暂不支持云端同步
 
 ### Rejection History
+
 | Date | Reason | Fix Applied | Resubmitted |
-|------|--------|-------------|-------------|
+| ---- | ------ | ----------- | ----------- |
 |      |        |             |             |
 
 ```json

@@ -18,7 +18,10 @@ export interface CorrectionResult {
   diffs: DiffEntry[];
 }
 
-export function tokenize(text: string, invVocab: Map<string, number>): number[] {
+export function tokenize(
+  text: string,
+  invVocab: Map<string, number>,
+): number[] {
   const ids = [CLS_ID];
   for (const ch of text) ids.push(invVocab.get(ch) ?? UNK_ID);
   ids.push(SEP_ID);
@@ -34,28 +37,37 @@ export function postprocess(
 ): CorrectionResult {
   const chars = Array.from(text);
   const diffs: DiffEntry[] = [];
-  let corrected = '';
+  let corrected = "";
   const posLogits = new Float32Array(vocabSize);
 
   for (let i = 0; i < chars.length; i++) {
     const offset = (i + 1) * vocabSize;
-    let max = -Infinity, maxIdx = 0;
+    let max = -Infinity,
+      maxIdx = 0;
     for (let v = 0; v < vocabSize; v++) {
       const val = data[offset + v];
       posLogits[v] = val;
-      if (val > max) { max = val; maxIdx = v; }
+      if (val > max) {
+        max = val;
+        maxIdx = v;
+      }
     }
     let sumExp = 0;
     for (let v = 0; v < vocabSize; v++) sumExp += Math.exp(posLogits[v] - max);
     const prob = 1 / sumExp;
 
     const origChar = chars[i];
-    let predChar = (vocab[maxIdx] ?? origChar).replace(/^##/, '');
-    if (predChar.startsWith('[')) predChar = origChar;
+    let predChar = (vocab[maxIdx] ?? origChar).replace(/^##/, "");
+    if (predChar.startsWith("[")) predChar = origChar;
 
     if (prob >= threshold && predChar !== origChar) {
       corrected += predChar;
-      diffs.push({ original: origChar, corrected: predChar, position: i, confidence: prob });
+      diffs.push({
+        original: origChar,
+        corrected: predChar,
+        position: i,
+        confidence: prob,
+      });
     } else {
       corrected += origChar;
     }

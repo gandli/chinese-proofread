@@ -1,7 +1,7 @@
 /** 自定义词典加载器（扩展环境：chrome.runtime.getURL） */
 export interface CustomDictEntry {
   term: string;
-  action: 'ignore' | 'correct';
+  action: "ignore" | "correct";
   correctTo?: string;
   domains?: string[];
 }
@@ -21,12 +21,14 @@ export interface Diff {
 let dictCache: CustomDict | null = null;
 let dictLoaded = false;
 
+import { log } from "../lib/logger";
+
 /** 加载词典（扩展环境：chrome.runtime.getURL / fetch） */
 export async function loadCustomDict(): Promise<CustomDict> {
   if (dictLoaded && dictCache) return dictCache;
   try {
-    if (typeof chrome !== 'undefined' && chrome.runtime?.getURL) {
-      const res = await fetch(chrome.runtime.getURL('custom-dict.json'));
+    if (typeof chrome !== "undefined" && chrome.runtime?.getURL) {
+      const res = await fetch(chrome.runtime.getURL("custom-dict.json"));
       if (res.ok) {
         dictCache = await res.json();
         dictLoaded = true;
@@ -34,10 +36,16 @@ export async function loadCustomDict(): Promise<CustomDict> {
       }
     }
     // 扩展环境未命中：回退到空词典（Node 环境加载由单独模块处理）
-    console.warn('[custom-dict] chrome.runtime.getURL unavailable, using empty dict');
+    log.warn("chrome.runtime.getURL unavailable, using empty dict", {
+      component: "custom-dict",
+    });
     dictCache = { version: 1, entries: [] };
   } catch (e) {
-    console.error('[custom-dict] Load failed:', e);
+    log.error(
+      "Load failed",
+      { component: "custom-dict" },
+      e instanceof Error ? e : new Error(String(e)),
+    );
     dictCache = { version: 1, entries: [] };
   }
   dictLoaded = true;
@@ -51,8 +59,12 @@ export function reloadCustomDict(): void {
 }
 
 /** 最长前缀匹配：返回命中的 entry 及其在文本中的位置 */
-function findMatches(text: string, entries: CustomDictEntry[]): Array<{ entry: CustomDictEntry; start: number; end: number }> {
-  const matches: Array<{ entry: CustomDictEntry; start: number; end: number }> = [];
+function findMatches(
+  text: string,
+  entries: CustomDictEntry[],
+): Array<{ entry: CustomDictEntry; start: number; end: number }> {
+  const matches: Array<{ entry: CustomDictEntry; start: number; end: number }> =
+    [];
   let i = 0;
   while (i < text.length) {
     let best: { entry: CustomDictEntry; len: number } | null = null;
@@ -88,9 +100,9 @@ export function applyCustomDict(text: string, diffs: Diff[]): Diff[] {
   const correctMap = new Map<string, string>();
 
   for (const m of matches) {
-    if (m.entry.action === 'ignore') {
+    if (m.entry.action === "ignore") {
       ignoreRanges.push([m.start, m.end]);
-    } else if (m.entry.action === 'correct' && m.entry.correctTo) {
+    } else if (m.entry.action === "correct" && m.entry.correctTo) {
       correctMap.set(`${m.start}-${m.end}`, m.entry.correctTo);
     }
   }
@@ -101,8 +113,8 @@ export function applyCustomDict(text: string, diffs: Diff[]): Diff[] {
     return ignoreRanges.some(([s, e]) => !(dEnd <= s || dStart >= e));
   }
 
-  const filtered = diffs.filter(d => !intersectsIgnore(d));
-  const corrected = filtered.map(d => {
+  const filtered = diffs.filter((d) => !intersectsIgnore(d));
+  const corrected = filtered.map((d) => {
     const key = `${d.position}-${d.position + d.original.length}`;
     if (correctMap.has(key)) {
       return { ...d, corrected: correctMap.get(key)! };

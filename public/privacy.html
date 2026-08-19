@@ -1,61 +1,135 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>中文校对助手 - 隐私政策</title>
-  <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem; line-height: 1.7; color: #333; }
-    h1 { color: #ef4444; border-bottom: 2px solid #ef4444; padding-bottom: 0.5rem; }
-    h2 { margin-top: 2rem; color: #1f2937; }
-    .meta { color: #666; font-size: 0.9rem; margin-bottom: 2rem; }
-    .highlight { background: #fef3c7; padding: 0.2rem 0.4rem; border-radius: 4px; }
-  </style>
-</head>
-<body>
-  <h1>中文校对助手 - 隐私政策</h1>
-  <p class="meta">最后更新：2026-08-19 | 版本 0.1.0</p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>中文校对助手 - 隐私政策</title>
+    <style>
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem;
+        line-height: 1.7;
+        color: #333;
+      }
+      h1 {
+        color: #ef4444;
+        border-bottom: 2px solid #ef4444;
+        padding-bottom: 0.5rem;
+      }
+      h2 {
+        margin-top: 2rem;
+        color: #1f2937;
+      }
+      .meta {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 2rem;
+      }
+      .highlight {
+        background: #fef3c7;
+        padding: 0.2rem 0.4rem;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>中文校对助手 - 隐私政策</h1>
+    <p class="meta">最后更新：2026-08-19 | 版本 0.1.0</p>
 
-  <h2>概述</h2>
-  <p>「中文校对助手」是一款<strong class="highlight">完全离线运行</strong>的浏览器扩展，用于中文长文本的智能校对。我们高度重视用户隐私，本政策说明本扩展如何处理您的数据。</p>
+    <h2>概述</h2>
+    <p>
+      「中文校对助手」是一款<strong class="highlight">完全离线运行</strong
+      >的浏览器扩展，用于中文长文本的智能校对。我们高度重视用户隐私，本政策说明本扩展如何处理您的数据。
+    </p>
 
-  <h2>数据收集与使用</h2>
-  <h3>本地存储（仅此一项）</h3>
-  <p>扩展使用 <code>chrome.storage.local</code> 在您的浏览器本地存储以下数据：</p>
-  <ul>
-    <li>用户自定义词典条目（忽略/修正映射）</li>
-    <li>扩展设置偏好（如启用/禁用状态）</li>
-  </ul>
-  <p><strong class="highlight">这些数据永不离开您的设备</strong>，不会上传至任何服务器，不会同步至云端，开发者无法访问。</p>
+    <h2>数据收集与使用</h2>
+    <h3>本地存储（仅此一项）</h3>
+    <p>
+      扩展使用 <code>chrome.storage.local</code> 在您的浏览器本地存储以下数据：
+    </p>
+    <ul>
+      <li>用户自定义词典条目（忽略/修正映射）</li>
+      <li>扩展设置偏好（如启用/禁用状态）</li>
+    </ul>
+    <p>
+      <strong class="highlight">这些数据永不离开您的设备</strong
+      >，不会上传至任何服务器，不会同步至云端，开发者无法访问。
+    </p>
 
-  <h3>不收集的数据</h3>
-  <ul>
-    <li>浏览历史、标签页 URL、页面内容</li>
-    <li>个人身份信息（姓名、邮箱、IP 等）</li>
-    <li>任何形式的追踪、分析、遥测数据</li>
-  </ul>
+    <h3>不收集的数据</h3>
+    <ul>
+      <li>浏览历史、标签页 URL、页面内容</li>
+      <li>个人身份信息（姓名、邮箱、IP 等）</li>
+      <li>任何形式的追踪、分析、遥测数据</li>
+    </ul>
 
-  <h2>权限说明</h2>
-  <table style="width:100%; border-collapse:collapse;">
-    <tr style="background:#f3f4f6;"><th style="padding:8px;text-align:left;">权限</th><th style="padding:8px;text-align:left;">用途</th></tr>
-    <tr><td style="padding:8px;border-bottom:1px solid #e5e7eb;"><code>storage</code></td><td style="padding:8px;border-bottom:1px solid #e5e7eb;">本地保存词典与设置</td></tr>
-    <tr style="background:#f9fafb;"><td style="padding:8px;border-bottom:1px solid #e5e7eb;"><code>sidePanel</code></td><td style="padding:8px;border-bottom:1px solid #e5e7eb;">侧边栏展示校对结果</td></tr>
-    <tr><td style="padding:8px;border-bottom:1px solid #e5e7eb;"><code>host_permissions</code>（可选，运行时申请）</td><td style="padding:8px;border-bottom:1px solid #e5e7eb;">点击「校对当前页面」时申请授权；<strong>一旦授权，权限将持久保留</strong>，直到您在浏览器扩展管理页手动撤销或卸载扩展</td></tr>
-  </table>
+    <h2>权限说明</h2>
+    <table style="width: 100%; border-collapse: collapse">
+      <tr style="background: #f3f4f6">
+        <th style="padding: 8px; text-align: left">权限</th>
+        <th style="padding: 8px; text-align: left">用途</th>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border-bottom: 1px solid #e5e7eb">
+          <code>storage</code>
+        </td>
+        <td style="padding: 8px; border-bottom: 1px solid #e5e7eb">
+          本地保存词典与设置
+        </td>
+      </tr>
+      <tr style="background: #f9fafb">
+        <td style="padding: 8px; border-bottom: 1px solid #e5e7eb">
+          <code>sidePanel</code>
+        </td>
+        <td style="padding: 8px; border-bottom: 1px solid #e5e7eb">
+          侧边栏展示校对结果
+        </td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border-bottom: 1px solid #e5e7eb">
+          <code>host_permissions</code>（可选，运行时申请）
+        </td>
+        <td style="padding: 8px; border-bottom: 1px solid #e5e7eb">
+          点击「校对当前页面」时申请授权；<strong>一旦授权，权限将持久保留</strong>，直到您在浏览器扩展管理页手动撤销或卸载扩展
+        </td>
+      </tr>
+    </table>
 
-  <h2>第三方服务</h2>
-  <p>无。扩展不集成任何第三方 SDK、统计、广告或追踪代码。AI 模型（MacBERT4CSC Q8）以 ONNX 格式打包在扩展内，<strong class="highlight">完全在浏览器本地推理</strong>，无网络请求。</p>
+    <h2>第三方服务</h2>
+    <p>
+      无。扩展不集成任何第三方 SDK、统计、广告或追踪代码。AI 模型（MacBERT4CSC
+      Q8）以 ONNX 格式打包在扩展内，<strong class="highlight"
+        >完全在浏览器本地推理</strong
+      >，无网络请求。
+    </p>
 
-  <h2>数据保留与删除</h2>
-  <p>本地存储数据随扩展卸载自动清除，或您可在扩展选项页手动清空词典/重置设置。</p>
+    <h2>数据保留与删除</h2>
+    <p>
+      本地存储数据随扩展卸载自动清除，或您可在扩展选项页手动清空词典/重置设置。
+    </p>
 
-  <h2>用户权利</h2>
-  <p>您可随时：查看/导出本地存储数据（开发者工具 → Application → Storage）、清空词典、卸载扩展彻底删除数据。</p>
+    <h2>用户权利</h2>
+    <p>
+      您可随时：查看/导出本地存储数据（开发者工具 → Application →
+      Storage）、清空词典、卸载扩展彻底删除数据。
+    </p>
 
-  <h2>联系我们</h2>
-  <p>如有隐私疑问，请通过 GitHub Issues 联系：<a href="https://github.com/gandli/chinese-proofread/issues">github.com/gandli/chinese-proofread/issues</a></p>
+    <h2>联系我们</h2>
+    <p>
+      如有隐私疑问，请通过 GitHub Issues 联系：<a
+        href="https://github.com/gandli/chinese-proofread/issues"
+        >github.com/gandli/chinese-proofread/issues</a
+      >
+    </p>
 
-  <hr style="margin:2rem 0;">
-  <p style="font-size:0.9rem;color:#666;">本政策仅适用于「中文校对助手」浏览器扩展。本扩展开源，代码托管于 <a href="https://github.com/gandli/chinese-proofread">GitHub</a>，欢迎审计。</p>
-</body>
+    <hr style="margin: 2rem 0" />
+    <p style="font-size: 0.9rem; color: #666">
+      本政策仅适用于「中文校对助手」浏览器扩展。本扩展开源，代码托管于
+      <a href="https://github.com/gandli/chinese-proofread">GitHub</a
+      >，欢迎审计。
+    </p>
+  </body>
 </html>
