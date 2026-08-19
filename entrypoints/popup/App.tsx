@@ -9,6 +9,7 @@ import {
   type ProofStatus,
   type CorrectionStats,
 } from "../../src/utils/correction-flow";
+import { cn } from "../../src/lib/cn";
 import type { Diff } from "../../src/types";
 
 interface TestHook {
@@ -64,10 +65,6 @@ function buttonLabel(status: ProofStatus) {
     case "permission-denied":
       return "授权后重试";
   }
-}
-
-function cn(...parts: (string | false | undefined)[]) {
-  return parts.filter(Boolean).join(" ");
 }
 
 export default function App() {
