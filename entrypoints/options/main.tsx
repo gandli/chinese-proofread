@@ -139,7 +139,7 @@ function Options() {
     setActiveDomain(domain);
   }
 
-  const inputCls = 'flex-1 px-3 py-2 border border-[#cbd5e1] rounded-lg text-[13px] bg-white text-text transition-[border-color,box-shadow] duration-150 focus:outline-none focus:border-primary focus:shadow-[0_0_0_3px_rgba(59,130,246,0.15)]';
+  const inputCls = 'flex-1 px-3 py-2 border border-border-subtle rounded-lg text-[13px] bg-white text-text transition-[border-color,box-shadow] duration-150 focus:outline-none focus:border-primary focus:shadow-[0_0_0_3px_rgba(59,130,246,0.15)]';
 
   return (
     <div className="options max-w-[800px] mx-auto">
@@ -160,7 +160,7 @@ function Options() {
           <button
             key={d}
             className={cn(
-              'tab px-3.5 py-1.5 border border-[#cbd5e1] rounded-full bg-white text-[#475569] text-xs font-medium cursor-pointer transition-colors duration-150 hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-[0.96]',
+              'tab px-3.5 py-1.5 border border-border-subtle rounded-full bg-white text-text-secondary text-xs font-medium cursor-pointer transition-colors duration-150 hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-[0.96]',
               activeDomain === d && 'bg-primary border-primary text-white hover:text-white hover:border-primary',
             )}
             onClick={() => handleDomainChange(d)}
@@ -172,7 +172,7 @@ function Options() {
 
       {/* 新增/编辑表单 */}
       <div className="bg-white border border-border rounded-xl p-5 mb-5">
-        <h2 className="text-[15px] font-semibold text-text mb-4 pb-3 border-b border-[#f1f5f9]">{editingIndex !== null ? '编辑词条' : '新增词条'}</h2>
+        <h2 className="text-[15px] font-semibold text-text mb-4 pb-3 border-b border-background-subtle">{editingIndex !== null ? '编辑词条' : '新增词条'}</h2>
         <div className="flex items-center gap-3 mb-3.5">
           <label className="w-20 text-[13px] text-muted font-medium shrink-0">词条</label>
           <input
@@ -226,7 +226,7 @@ function Options() {
           {editingIndex !== null ? (
             <>
               <button className={cn(btnBase, 'bg-primary text-white hover:bg-primary-hover')} onClick={handleSaveEdit}>保存</button>
-              <button className={cn(btnBase, 'bg-[#e5e9f0] text-text hover:bg-[#cbd5e1]')} onClick={handleCancelEdit}>取消</button>
+              <button className={cn(btnBase, 'bg-[#e5e9f0] text-text hover:bg-border-subtle')} onClick={handleCancelEdit}>取消</button>
             </>
           ) : (
             <button className={cn(btnBase, 'bg-primary text-white hover:bg-primary-hover')} onClick={handleAdd}>添加</button>
@@ -236,12 +236,12 @@ function Options() {
 
       {/* 导入导出 */}
       <div className="bg-white border border-border rounded-xl p-5 mb-5">
-        <h2 className="text-[15px] font-semibold text-text mb-4 pb-3 border-b border-[#f1f5f9]">导入 / 导出</h2>
+        <h2 className="text-[15px] font-semibold text-text mb-4 pb-3 border-b border-background-subtle">导入 / 导出</h2>
         <div className="flex gap-3 flex-wrap">
-          <button className={cn(btnBase, 'bg-[#e5e9f0] text-text hover:bg-[#cbd5e1]')} onClick={handleExport}>导出词典 (JSON)</button>
+          <button className={cn(btnBase, 'bg-[#e5e9f0] text-text hover:bg-border-subtle')} onClick={handleExport}>导出词典 (JSON)</button>
           <label className="file-input relative cursor-pointer">
             <input type="file" accept=".json" onChange={handleImport} className="absolute opacity-0 w-full h-full cursor-pointer" />
-            <span className="inline-block px-4 py-2 border border-dashed border-[#cbd5e1] rounded-lg bg-surface text-[#475569] text-[13px] transition-all duration-150 hover:border-primary hover:bg-[#eff6ff] hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+            <span className="inline-block px-4 py-2 border border-dashed border-border-subtle rounded-lg bg-surface text-text-secondary text-[13px] transition-all duration-150 hover:border-primary hover:bg-primary-soft hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
               导入词典
             </span>
           </label>
@@ -280,7 +280,7 @@ function Options() {
                     )).join(' ') || '—'}
                   </td>
                   <td>
-                    <button className="btn-icon bg-none border-none cursor-pointer text-sm px-2.5 py-1.5 min-w-9 min-h-9 rounded-md transition-colors duration-150 hover:bg-[#f1f5f9] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-[0.96]" onClick={() => handleEdit(i)} title="编辑" aria-label="编辑">
+                    <button className="btn-icon bg-none border-none cursor-pointer text-sm px-2.5 py-1.5 min-w-9 min-h-9 rounded-md transition-colors duration-150 hover:bg-background-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-[0.96]" onClick={() => handleEdit(i)} title="编辑" aria-label="编辑">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
                     </button>
                     <button className="btn-icon bg-none border-none cursor-pointer text-sm px-2.5 py-1.5 min-w-9 min-h-9 rounded-md transition-colors duration-150 hover:bg-error-bg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-[0.96] text-error" onClick={() => handleDelete(i)} title="删除" aria-label="删除">

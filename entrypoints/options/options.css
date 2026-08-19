@@ -9,9 +9,9 @@
 .form-row select[multiple] { min-height: 80px; }
 
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
-th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #f1f5f9; }
+th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--color-background-subtle); }
 tr:last-child td { border-bottom: none; }
-td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-family: inherit; font-size: 13px; }
+td code { background: var(--color-background-subtle); padding: 2px 6px; border-radius: 4px; font-family: inherit; font-size: 13px; }
 
 /* 减少动效偏好：扁平化入场与按压 */
 @media (prefers-reduced-motion: reduce) {

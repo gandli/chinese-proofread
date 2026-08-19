@@ -23,7 +23,7 @@ function DiffItem({ diff, index, onAccept, onIgnore, onJump }: {
   onJump: (d: Diff) => void;
 }) {
   return (
-    <div className="diff-item bg-surface border border-border rounded-[10px] p-3 transition-[box-shadow,border-color] duration-150 hover:shadow-[0_4px_16px_rgba(15,23,42,0.08)] hover:border-[#cbd5e1]">
+    <div className="diff-item bg-surface border border-border rounded-[10px] p-3 transition-[box-shadow,border-color] duration-150 hover:shadow-[0_4px_16px_rgba(15,23,42,0.08)] hover:border-border-subtle">
       <div className="diff-header flex items-center justify-between mb-1.5">
         <span className="diff-index text-xs font-semibold text-muted">#{index + 1}</span>
         <span className="diff-confidence text-[11px] text-success bg-success-bg px-1.5 py-0.5 rounded tabular-nums">
@@ -37,7 +37,7 @@ function DiffItem({ diff, index, onAccept, onIgnore, onJump }: {
       </div>
       <div className="diff-actions flex gap-2">
         <button className="btn px-3 py-1.5 rounded-md text-xs font-medium cursor-pointer border-none transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-[0.96] bg-success text-white hover:bg-[#065f46]" onClick={() => onAccept(diff)}>采用</button>
-        <button className="btn px-3 py-1.5 rounded-md text-xs font-medium cursor-pointer border transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-[0.96] bg-white text-[#475569] border-[#cbd5e1] hover:bg-[#f1f5f9] hover:border-[#94a3b8]" onClick={() => onIgnore(diff)}>忽略</button>
+        <button className="btn px-3 py-1.5 rounded-md text-xs font-medium cursor-pointer border transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-[0.96] bg-white text-text-secondary border-border-subtle hover:bg-background-subtle hover:border-[#94a3b8]" onClick={() => onIgnore(diff)}>忽略</button>
         <button className="btn px-3 py-1.5 rounded-md text-xs font-medium cursor-pointer border-none transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-[0.96] bg-primary text-white hover:bg-primary-hover" onClick={() => onJump(diff)}>跳转</button>
       </div>
     </div>
@@ -149,7 +149,7 @@ function SidePanel() {
           校对结果 <span className="count text-xs font-normal text-error bg-error-bg px-2 py-0.5 rounded-full ml-2">{state.diffs.length} 处</span>
         </h1>
         <div className="batch-actions flex gap-2">
-          <button className="btn px-3 py-1.5 rounded-md text-xs font-medium cursor-pointer border-none transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-[0.96] bg-[#e5e9f0] text-text hover:bg-[#cbd5e1]" onClick={handleAcceptAll}>全部采用</button>
+          <button className="btn px-3 py-1.5 rounded-md text-xs font-medium cursor-pointer border-none transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-[0.96] bg-[#e5e9f0] text-text hover:bg-border-subtle" onClick={handleAcceptAll}>全部采用</button>
           <button className="btn px-3 py-1.5 rounded-md text-xs font-medium cursor-pointer border-none transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-[0.96] bg-error-bg text-error hover:bg-[#fecaca]" onClick={handleIgnoreAll}>全部忽略</button>
         </div>
       </header>
