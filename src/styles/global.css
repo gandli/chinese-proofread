@@ -1,6 +1,7 @@
-/* 共享设计 token：三界面（popup/sidepanel/options）统一引用
- * 品牌错误红 #ef4444 与 content.ts 波浪线一致，勿改 */
-:root {
+/* 全局 Tailwind v4 CSS-first 配置 + 设计 token */
+@import "tailwindcss";
+
+@theme {
   --color-error: #ef4444;
   --color-error-bg: #fef2f2;
   --color-error-border: #fecaca;
@@ -13,4 +14,8 @@
   --color-muted: #64748b;
   --color-border: #e5e9f0;
   --color-surface: #f8fafc;
+  --color-surface-2: #e8ecf4;
+  --color-accent: #ef4444;
+  --color-green: #047857;
+  --color-amber: #b45309;
 }

@@ -1,4 +1,5 @@
 import { defineConfig } from 'wxt';
+import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   modules: ['@wxt-dev/module-react'],
@@ -17,6 +18,9 @@ export default defineConfig({
     options_page: 'options.html',
   },
   vite: () => ({
+    // ponytail: Tailwind v4 插件类型与 WXT 内置 Vite 5 类型不匹配，as any 规避；
+    // WXT 升 Vite 6 后移除
+    plugins: [tailwindcss() as any],
     build: {
       target: 'esnext',
     },
