@@ -59,7 +59,9 @@ function SidePanel() {
 
   // 监听 popup/content 发来的高亮数据
   useEffect(() => {
-    const handleMessage = (msg: any) => {
+    const handleMessage = (msg: any, sender: chrome.runtime.MessageSender) => {
+      // 验证发送者：仅接受扩展自身消息
+      if (sender.id !== chrome.runtime.id) return;
       if (msg?.type === 'sync-diffs') {
         setState({
           diffs: msg.diffs,

@@ -11,7 +11,9 @@ export default defineContentScript({
 
     const highlighter = new ProofHighlighter();
 
-    chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
+    chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+      // 验证发送者：仅接受扩展自身消息，防止恶意页面注入
+      if (sender.id !== chrome.runtime.id) return;
       if (msg?.type === 'extract') {
         const doc = document.cloneNode(true) as Document;
         const article = new Readability(doc).parse();
