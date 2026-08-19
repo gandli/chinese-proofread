@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { createRoot } from "react-dom/client";
 import type { CustomDictEntry, CustomDict } from "../../src/utils/custom-dict";
+import { cn } from "../../src/lib/cn";
 import "./options.css";
 
 interface TestHook {
@@ -14,10 +15,6 @@ const DEFAULT_DOMAINS = [
   "finance",
   "tech",
 ] as const;
-
-function cn(...parts: (string | false | undefined)[]) {
-  return parts.filter(Boolean).join(" ");
-}
 
 const btnBase =
   "px-4 py-2 rounded-lg text-[13px] font-medium cursor-pointer border-none transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-[0.96]";

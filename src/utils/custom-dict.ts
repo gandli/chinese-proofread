@@ -1,5 +1,6 @@
 /** 自定义词典加载器（扩展环境：chrome.runtime.getURL） */
 import { log } from "../lib/logger";
+import type { DiffEntry as Diff } from "../engines/codec";
 
 export interface CustomDictEntry {
   term: string;
@@ -11,13 +12,6 @@ export interface CustomDictEntry {
 export interface CustomDict {
   version: number;
   entries: CustomDictEntry[];
-}
-
-export interface Diff {
-  position: number;
-  original: string;
-  corrected: string;
-  confidence: number;
 }
 
 let dictCache: CustomDict | null = null;
