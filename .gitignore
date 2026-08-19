@@ -34,3 +34,5 @@ Thumbs.db
 .env
 .env.local
 public/models/
+chinese-proofread-v*.zip
+*.zip
