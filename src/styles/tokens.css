@@ -1,0 +1,16 @@
+/* 共享设计 token：三界面（popup/sidepanel/options）统一引用
+ * 品牌错误红 #ef4444 与 content.ts 波浪线一致，勿改 */
+:root {
+  --color-error: #ef4444;
+  --color-error-bg: #fef2f2;
+  --color-error-border: #fecaca;
+  --color-success: #047857;
+  --color-success-bg: #ecfdf5;
+  --color-success-border: #a7f3d0;
+  --color-primary: #3b82f6;
+  --color-primary-hover: #2563eb;
+  --color-text: #1a2233;
+  --color-muted: #64748b;
+  --color-border: #e5e9f0;
+  --color-surface: #f8fafc;
+}
