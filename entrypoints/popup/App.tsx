@@ -1,42 +1,22 @@
 // Popup: 极简状态面板 + 触发入口
 // 页面交互（高亮点击 → popover）已在 content.ts 完成
+// 校对流程逻辑在 src/utils/correction-flow.ts（可单测），本组件仅编排 UI 状态
 import { useState, useRef, useEffect } from "react";
 import "./popup.css";
-import { MacBertCorrector } from "../../src/engines/macbert";
-import { splitLongText, mergeDiffs } from "../../src/utils/splitter";
-import { loadCustomDict, applyCustomDict } from "../../src/utils/custom-dict";
+import {
+  runCorrection,
+  PermissionDeniedError,
+  type ProofStatus,
+  type CorrectionStats,
+} from "../../src/utils/correction-flow";
 import type { Diff } from "../../src/types";
-
-let corrector: MacBertCorrector | null = null;
-let correctorInit: Promise<MacBertCorrector> | null = null;
-async function getCorrector(): Promise<MacBertCorrector> {
-  if (corrector) return corrector;
-  correctorInit ??= (async () => {
-    const c = new MacBertCorrector(
-      chrome.runtime.getURL("models/model_quantized.onnx"),
-      chrome.runtime.getURL("models/vocab.txt"),
-    );
-    await c.init();
-    return c;
-  })();
-  return (corrector = await correctorInit);
-}
-
-type Status =
-  | "idle"
-  | "extracting"
-  | "loading"
-  | "correcting"
-  | "done"
-  | "error"
-  | "permission-denied";
 
 interface TestHook {
   setState: (
     partial: Partial<{
-      status: Status;
+      status: ProofStatus;
       diffs: Diff[];
-      stats: { chars: number; timeMs: number } | null;
+      stats: CorrectionStats | null;
       errMsg: string;
     }>,
   ) => void;
@@ -67,9 +47,9 @@ function Squiggle({
   );
 }
 
-const BUSY: readonly Status[] = ["extracting", "loading", "correcting"];
+const BUSY: readonly ProofStatus[] = ["extracting", "loading", "correcting"];
 
-function buttonLabel(status: Status) {
+function buttonLabel(status: ProofStatus) {
   switch (status) {
     case "idle":
       return "校对当前页面";
@@ -93,12 +73,10 @@ function cn(...parts: (string | false | undefined)[]) {
 }
 
 export default function App() {
-  const [status, setStatus] = useState<Status>("idle");
+  const [status, setStatus] = useState<ProofStatus>("idle");
   const [diffs, setDiffs] = useState<Diff[]>([]);
   const [errMsg, setErrMsg] = useState("");
-  const [stats, setStats] = useState<{ chars: number; timeMs: number } | null>(
-    null,
-  );
+  const [stats, setStats] = useState<CorrectionStats | null>(null);
   const tabRef = useRef<chrome.tabs.Tab[]>([]);
 
   // 测试钩子：允许直接注入状态（供 e2e 截图用）
@@ -123,7 +101,6 @@ export default function App() {
     setStats(null);
     setStatus("extracting");
     try {
-      const t0 = performance.now();
       const [tab] = await chrome.tabs.query({
         active: true,
         currentWindow: true,
@@ -131,47 +108,11 @@ export default function App() {
       if (!tab.id) throw new Error("未找到活动标签页");
       tabRef.current = [tab];
 
-      // 运行时申请 optional host_permissions（用户首次点击时弹窗授权）
-      const hasPermission = await chrome.permissions.contains({
-        origins: ["<all_urls>"],
-      });
-      if (!hasPermission) {
-        const granted = await chrome.permissions.request({
-          origins: ["<all_urls>"],
-        });
-        if (!granted) {
-          setErrMsg("");
-          setStatus("permission-denied");
-          return;
-        }
-      }
-
-      const extracted = await chrome.tabs.sendMessage(tab.id, {
-        type: "extract",
-      });
-      const text: string = extracted?.text ?? "";
-      if (!text) throw new Error("未能提取到页面正文");
-
       setStatus("loading");
-      const corrector = await getCorrector();
-      const chunks = splitLongText(text, 510, 20);
-      const chunkDiffs = await Promise.all(
-        chunks.map(async (chunk) => {
-          const res = await corrector.correct(chunk.text);
-          return res.diffs;
-        }),
-      );
-      let merged = mergeDiffs(chunks, chunkDiffs);
-
-      // 应用自定义词典（行业专业词库）
-      await loadCustomDict();
-      merged = applyCustomDict(text, merged);
+      const { text, diffs: merged, stats: s } = await runCorrection(tab.id);
 
       setDiffs(merged);
-      setStats({
-        chars: text.length,
-        timeMs: Math.round(performance.now() - t0),
-      });
+      setStats(s);
       setStatus("done");
 
       if (merged.length > 0) {
@@ -183,8 +124,13 @@ export default function App() {
         });
       }
     } catch (err) {
-      setStatus("error");
-      setErrMsg(String(err));
+      if (err instanceof PermissionDeniedError) {
+        setErrMsg("");
+        setStatus("permission-denied");
+      } else {
+        setStatus("error");
+        setErrMsg(String(err));
+      }
     }
   }
 
