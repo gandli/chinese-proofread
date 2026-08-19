@@ -79,6 +79,7 @@
   background: #ecfdf5;
   padding: 2px 6px;
   border-radius: 4px;
+  font-variant-numeric: tabular-nums;
 }
 
 .diff-change {
@@ -118,8 +119,10 @@
   font-weight: 500;
   cursor: pointer;
   border: none;
-  transition: background .15s, color .15s;
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s;
 }
+.btn:focus-visible { outline: 2px solid #3b82f6; outline-offset: 2px; }
+.btn:active { transform: scale(0.96); }
 
 .btn-accept {
   background: #047857;
@@ -178,4 +181,10 @@
 
 .empty .hint {
   font-size: 12px;
+}
+
+/* 减少动效偏好 */
+@media (prefers-reduced-motion: reduce) {
+  .diff-item { transition: none; }
+  .btn { transform: none !important; transition: none !important; }
 }

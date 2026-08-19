@@ -89,8 +89,9 @@ body {
 }
 
 .action:hover:not(:disabled) { background: #2a3650; }
-.action:active:not(:disabled) { transform: scale(0.99); }
+.action:active:not(:disabled) { transform: scale(0.96); }
 .action:disabled { opacity: 0.5; cursor: default; }
+.action:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .action--busy { opacity: 0.8; }
 
 .action--done { background: var(--green); color: #ffffff; }
@@ -149,6 +150,7 @@ body {
   display: flex;
   align-items: center;
   gap: 5px;
+  font-variant-numeric: tabular-nums;
 }
 
 .footer .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); display: inline-block; }
@@ -156,3 +158,9 @@ body {
 /* ── Scrollbar ──────────────────────── */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* 减少动效偏好 */
+@media (prefers-reduced-motion: reduce) {
+  .spinner { animation-duration: 1.6s; }
+  .action { transform: none !important; transition: none !important; }
+}

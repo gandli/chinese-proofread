@@ -306,8 +306,8 @@ class ProofHighlighter {
       // 触发 input 事件
       textarea.dispatchEvent(new Event('input', { bubbles: true }));
     } else if ((editableEl as HTMLElement).isContentEditable) {
-      // contenteditable: 使用 execCommand 或直接操作
-      document.execCommand('insertText', false, diff.corrected);
+      // contenteditable: 使用现代 Selection API 替代废弃的 execCommand
+      this.applyCorrectionInContentEditable(entry, editableEl);
     }
     
     // 记录撤销栈（存位置而非 Range）
@@ -315,6 +315,38 @@ class ProofHighlighter {
     this.redoStack.length = 0;
     // 移除该处高亮
     this.removeRangeFor(entry);
+  }
+  
+  /** contenteditable 现代修正：删除选区内容并插入纠正文本 */
+  private applyCorrectionInContentEditable(entry: { node: Text; localPos: number; diff: Diff; range: Range }, editableEl: HTMLElement) {
+    const { range, diff } = entry;
+    
+    // 保存当前选择
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return;
+    
+    // 删除选区内容
+    range.deleteContents();
+    
+    // 创建文本节点并插入
+    const textNode = document.createTextNode(diff.corrected);
+    range.insertNode(textNode);
+    
+    // 将光标移到插入文本之后
+    range.setStartAfter(textNode);
+    range.collapse(true);
+    
+    // 恢复选择
+    selection.removeAllRanges();
+    selection.addRange(range);
+    
+    // 触发 input 事件通知框架（React/Vue 等）
+    editableEl.dispatchEvent(new InputEvent('input', { 
+      bubbles: true, 
+      cancelable: true,
+      inputType: 'insertText',
+      data: diff.corrected
+    }));
   }
 
   private removeRangeFor(entry: { node: Text; localPos: number; diff: Diff; range: Range }) {
