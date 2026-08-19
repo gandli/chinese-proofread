@@ -94,6 +94,13 @@ export default function App() {
       if (!tab.id) throw new Error('未找到活动标签页');
       tabRef.current = [tab];
 
+      // 运行时申请 optional host_permissions（用户首次点击时弹窗授权）
+      const hasPermission = await chrome.permissions.contains({ origins: ['<all_urls>'] });
+      if (!hasPermission) {
+        const granted = await chrome.permissions.request({ origins: ['<all_urls>'] });
+        if (!granted) throw new Error('需要授权访问当前页面才能校对');
+      }
+
       const extracted = await chrome.tabs.sendMessage(tab.id, { type: 'extract' });
       const text: string = extracted?.text ?? '';
       if (!text) throw new Error('未能提取到页面正文');

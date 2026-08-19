@@ -8,10 +8,16 @@ export default defineConfig({
     name: '中文校对助手',
     description: '本地 AI 中文长文智能校对 - 离线可用',
     permissions: ['storage', 'sidePanel'],
-    host_permissions: ['<all_urls>'],
+    optional_host_permissions: ['<all_urls>'],
+    icons: {
+      '16': 'icons/icon16.png',
+      '48': 'icons/icon48.png',
+      '128': 'icons/icon128.png',
+    },
     content_security_policy: {
       extension_pages: "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; connect-src 'self'",
     },
+    privacy_policy: 'https://github.com/gandli/chinese-proofread/blob/main/public/privacy.html',
     side_panel: {
       default_path: 'sidepanel.html',
     },
