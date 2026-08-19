@@ -5,6 +5,15 @@ const STYLE_ID = "ps-proof-style";
 const UNDERLINE = "wavy";
 const COLOR = "#ef4444";
 
+type Op = {
+  node: Text;
+  startOffset: number;
+  endOffset: number;
+  oldText: string;
+  newText: string;
+  diff: Diff;
+};
+
 /** 页面级校对管理器：高亮 → 点击定位 → popover → 原地修正（含撤销） */
 export class ProofHighlighter {
   private diffNodes = new Map<
@@ -14,23 +23,9 @@ export class ProofHighlighter {
   private popover: ProofPopover | null = null;
   private appliedRanges = new Set<Range>();
   private clickHandler: ((e: MouseEvent) => void) | null = null;
-  // 撤销栈：存储位置信息而非 Range（避免 replaceWith 后 Range 失效）
-  private undoStack: Array<{
-    node: Text;
-    startOffset: number;
-    endOffset: number;
-    oldText: string;
-    newText: string;
-    diff: Diff;
-  }> = [];
-  private redoStack: Array<{
-    node: Text;
-    startOffset: number;
-    endOffset: number;
-    oldText: string;
-    newText: string;
-    diff: Diff;
-  }> = [];
+  // 撤销栈：存位置而非 Range（避免 replaceWith 后失效）
+  private undoStack: Op[] = [];
+  private redoStack: Op[] = [];
 
   constructor() {
     this.ensureStyle();
