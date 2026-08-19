@@ -30,13 +30,13 @@ describe('custom-dict', () => {
   });
 
   it('applyCustomDict: correct 替换 corrected', () => {
-    const text = '烟碱含量';
+    const text = '香菸售卖';
     const diffs = [
-      { position: 0, original: '烟碱', corrected: '尼古丁', confidence: 0.7 },
+      { position: 0, original: '香菸', corrected: '香烟', confidence: 0.7 },
     ];
     const result = applyCustomDictNode(text, diffs);
     expect(result.length).toBe(1);
-    expect(result[0].corrected).toBe('尼古丁'); // 词典里 correctTo 也是尼古丁
+    expect(result[0].corrected).toBe('香烟'); // 词典里 香菸 correctTo 香烟
   });
 
   it('applyCustomDict: 无匹配时保留原 diffs', () => {

@@ -1,59 +1,438 @@
 {
   "version": 1,
   "entries": [
-    { "term": "烟丝", "action": "ignore" },
-    { "term": "焦油量", "action": "ignore" },
-    { "term": "卷烟", "action": "ignore" },
-    { "term": "烟气", "action": "ignore" },
-    { "term": "烟碱", "action": "correct", "correctTo": "尼古丁" },
-    { "term": "焦油", "action": "ignore" },
-    { "term": "烟草", "action": "ignore" },
-    { "term": "烟支", "action": "ignore" },
-    { "term": "烟盒", "action": "ignore" },
-    { "term": "条盒", "action": "ignore" },
-    { "term": "小盒", "action": "ignore" },
-    { "term": "包装", "action": "ignore" },
-    { "term": "商标", "action": "ignore" },
-    { "term": "防伪", "action": "ignore" },
-    { "term": "钢印", "action": "ignore" },
-    { "term": "喷码", "action": "ignore" },
-    { "term": "物流码", "action": "ignore" },
-    { "term": "条码", "action": "ignore" },
-    { "term": "二维码", "action": "ignore" },
-    { "term": "专卖", "action": "ignore" },
-    { "term": "稽查", "action": "ignore" },
-    { "term": "零售户", "action": "ignore" },
-    { "term": "零售点", "action": "ignore" },
-    { "term": "卷烟零售", "action": "ignore" },
-    { "term": "烟草专卖", "action": "ignore" },
-    { "term": "烟草稽查", "action": "ignore" },
-    { "term": "假烟", "action": "ignore" },
-    { "term": "劣烟", "action": "ignore" },
-    { "term": "走私烟", "action": "ignore" },
-    { "term": "私烟", "action": "ignore" },
-    { "term": "真伪", "action": "ignore" },
-    { "term": "鉴别", "action": "ignore" },
-    { "term": "识别", "action": "ignore" },
-    { "term": "查验", "action": "ignore" },
-    { "term": "抽检", "action": "ignore" },
-    { "term": "送检", "action": "ignore" },
-    { "term": "检测", "action": "ignore" },
-    { "term": "判定", "action": "ignore" },
-    { "term": "认定", "action": "ignore" },
-    { "term": "立案", "action": "ignore" },
-    { "term": "查处", "action": "ignore" },
-    { "term": "没收", "action": "ignore" },
-    { "term": "销毁", "action": "ignore" },
-    { "term": "罚没", "action": "ignore" },
-    { "term": "行政处罚", "action": "ignore" },
-    { "term": "案件", "action": "ignore" },
-    { "term": "线索", "action": "ignore" },
-    { "term": "举报", "action": "ignore" },
-    { "term": "巡查", "action": "ignore" },
-    { "term": "暗访", "action": "ignore" },
-    { "term": "体系", "action": "ignore" },
-    { "term": "流程", "action": "ignore" },
-    { "term": "规范", "action": "ignore" },
-    { "term": "标准", "action": "ignore" }
+    {
+      "term": "烟丝",
+      "action": "ignore"
+    },
+    {
+      "term": "焦油量",
+      "action": "ignore"
+    },
+    {
+      "term": "卷烟",
+      "action": "ignore"
+    },
+    {
+      "term": "烟气",
+      "action": "ignore"
+    },
+    {
+      "term": "烟碱",
+      "action": "ignore"
+    },
+    {
+      "term": "焦油",
+      "action": "ignore"
+    },
+    {
+      "term": "烟草",
+      "action": "ignore"
+    },
+    {
+      "term": "烟支",
+      "action": "ignore"
+    },
+    {
+      "term": "烟盒",
+      "action": "ignore"
+    },
+    {
+      "term": "条盒",
+      "action": "ignore"
+    },
+    {
+      "term": "小盒",
+      "action": "ignore"
+    },
+    {
+      "term": "包装",
+      "action": "ignore"
+    },
+    {
+      "term": "商标",
+      "action": "ignore"
+    },
+    {
+      "term": "防伪",
+      "action": "ignore"
+    },
+    {
+      "term": "钢印",
+      "action": "ignore"
+    },
+    {
+      "term": "喷码",
+      "action": "ignore"
+    },
+    {
+      "term": "物流码",
+      "action": "ignore"
+    },
+    {
+      "term": "条码",
+      "action": "ignore"
+    },
+    {
+      "term": "二维码",
+      "action": "ignore"
+    },
+    {
+      "term": "专卖",
+      "action": "ignore"
+    },
+    {
+      "term": "稽查",
+      "action": "ignore"
+    },
+    {
+      "term": "零售户",
+      "action": "ignore"
+    },
+    {
+      "term": "零售点",
+      "action": "ignore"
+    },
+    {
+      "term": "卷烟零售",
+      "action": "ignore"
+    },
+    {
+      "term": "烟草专卖",
+      "action": "ignore"
+    },
+    {
+      "term": "烟草稽查",
+      "action": "ignore"
+    },
+    {
+      "term": "假烟",
+      "action": "ignore"
+    },
+    {
+      "term": "劣烟",
+      "action": "ignore"
+    },
+    {
+      "term": "走私烟",
+      "action": "ignore"
+    },
+    {
+      "term": "私烟",
+      "action": "ignore"
+    },
+    {
+      "term": "真伪",
+      "action": "ignore"
+    },
+    {
+      "term": "鉴别",
+      "action": "ignore"
+    },
+    {
+      "term": "识别",
+      "action": "ignore"
+    },
+    {
+      "term": "查验",
+      "action": "ignore"
+    },
+    {
+      "term": "抽检",
+      "action": "ignore"
+    },
+    {
+      "term": "送检",
+      "action": "ignore"
+    },
+    {
+      "term": "检测",
+      "action": "ignore"
+    },
+    {
+      "term": "判定",
+      "action": "ignore"
+    },
+    {
+      "term": "认定",
+      "action": "ignore"
+    },
+    {
+      "term": "立案",
+      "action": "ignore"
+    },
+    {
+      "term": "查处",
+      "action": "ignore"
+    },
+    {
+      "term": "没收",
+      "action": "ignore"
+    },
+    {
+      "term": "销毁",
+      "action": "ignore"
+    },
+    {
+      "term": "罚没",
+      "action": "ignore"
+    },
+    {
+      "term": "行政处罚",
+      "action": "ignore"
+    },
+    {
+      "term": "案件",
+      "action": "ignore"
+    },
+    {
+      "term": "线索",
+      "action": "ignore"
+    },
+    {
+      "term": "举报",
+      "action": "ignore"
+    },
+    {
+      "term": "巡查",
+      "action": "ignore"
+    },
+    {
+      "term": "暗访",
+      "action": "ignore"
+    },
+    {
+      "term": "体系",
+      "action": "ignore"
+    },
+    {
+      "term": "流程",
+      "action": "ignore"
+    },
+    {
+      "term": "规范",
+      "action": "ignore"
+    },
+    {
+      "term": "标准",
+      "action": "ignore"
+    },
+    {
+      "term": "烤烟",
+      "action": "ignore"
+    },
+    {
+      "term": "晾烟",
+      "action": "ignore"
+    },
+    {
+      "term": "白肋烟",
+      "action": "ignore"
+    },
+    {
+      "term": "香料烟",
+      "action": "ignore"
+    },
+    {
+      "term": "再造烟叶",
+      "action": "ignore"
+    },
+    {
+      "term": "膨胀烟丝",
+      "action": "ignore"
+    },
+    {
+      "term": "梗丝",
+      "action": "ignore"
+    },
+    {
+      "term": "薄片",
+      "action": "ignore"
+    },
+    {
+      "term": "滤嘴",
+      "action": "ignore"
+    },
+    {
+      "term": "滤棒",
+      "action": "ignore"
+    },
+    {
+      "term": "接装纸",
+      "action": "ignore"
+    },
+    {
+      "term": "成型纸",
+      "action": "ignore"
+    },
+    {
+      "term": "盘纸",
+      "action": "ignore"
+    },
+    {
+      "term": "水松纸",
+      "action": "ignore"
+    },
+    {
+      "term": "铝箔纸",
+      "action": "ignore"
+    },
+    {
+      "term": "小盒包装",
+      "action": "ignore"
+    },
+    {
+      "term": "条盒包装",
+      "action": "ignore"
+    },
+    {
+      "term": "卷烟纸",
+      "action": "ignore"
+    },
+    {
+      "term": "烟用丝束",
+      "action": "ignore"
+    },
+    {
+      "term": "烟叶",
+      "action": "ignore"
+    },
+    {
+      "term": "烟梗",
+      "action": "ignore"
+    },
+    {
+      "term": "烟末",
+      "action": "ignore"
+    },
+    {
+      "term": "品吸",
+      "action": "ignore"
+    },
+    {
+      "term": "评吸",
+      "action": "ignore"
+    },
+    {
+      "term": "烟气成分",
+      "action": "ignore"
+    },
+    {
+      "term": "焦油含量",
+      "action": "ignore"
+    },
+    {
+      "term": "一氧化碳量",
+      "action": "ignore"
+    },
+    {
+      "term": "总粒相物",
+      "action": "ignore"
+    },
+    {
+      "term": "准运证",
+      "action": "ignore"
+    },
+    {
+      "term": "专卖许可证",
+      "action": "ignore"
+    },
+    {
+      "term": "零售许可证",
+      "action": "ignore"
+    },
+    {
+      "term": "订货",
+      "action": "ignore"
+    },
+    {
+      "term": "访销",
+      "action": "ignore"
+    },
+    {
+      "term": "配送",
+      "action": "ignore"
+    },
+    {
+      "term": "打码到条",
+      "action": "ignore"
+    },
+    {
+      "term": "电子烟",
+      "action": "ignore"
+    },
+    {
+      "term": "加热不燃烧",
+      "action": "ignore"
+    },
+    {
+      "term": "烟油",
+      "action": "ignore"
+    },
+    {
+      "term": "雾化器",
+      "action": "ignore"
+    },
+    {
+      "term": "裱花",
+      "action": "ignore"
+    },
+    {
+      "term": "翻盖",
+      "action": "ignore"
+    },
+    {
+      "term": "软包",
+      "action": "ignore"
+    },
+    {
+      "term": "硬包",
+      "action": "ignore"
+    },
+    {
+      "term": "细支",
+      "action": "ignore"
+    },
+    {
+      "term": "中支",
+      "action": "ignore"
+    },
+    {
+      "term": "短支",
+      "action": "ignore"
+    },
+    {
+      "term": "爆珠",
+      "action": "ignore"
+    },
+    {
+      "term": "低焦油",
+      "action": "ignore"
+    },
+    {
+      "term": "烟土",
+      "action": "correct",
+      "correctTo": "烟丝"
+    },
+    {
+      "term": "烟膏",
+      "action": "correct",
+      "correctTo": "烟丝"
+    },
+    {
+      "term": "烟卷",
+      "action": "correct",
+      "correctTo": "卷烟"
+    },
+    {
+      "term": "香菸",
+      "action": "correct",
+      "correctTo": "香烟"
+    },
+    {
+      "term": "菸",
+      "action": "correct",
+      "correctTo": "烟"
+    }
   ]
 }
