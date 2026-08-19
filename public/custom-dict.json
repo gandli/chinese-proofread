@@ -433,6 +433,822 @@
       "term": "菸",
       "action": "correct",
       "correctTo": "烟"
+    },
+    {
+      "term": "烟草专卖品",
+      "action": "ignore"
+    },
+    {
+      "term": "烟草制品",
+      "action": "ignore"
+    },
+    {
+      "term": "雪茄烟",
+      "action": "ignore"
+    },
+    {
+      "term": "复烤烟叶",
+      "action": "ignore"
+    },
+    {
+      "term": "烟草专用机械",
+      "action": "ignore"
+    },
+    {
+      "term": "烟草专卖许可证",
+      "action": "ignore"
+    },
+    {
+      "term": "专卖许可证制度",
+      "action": "ignore"
+    },
+    {
+      "term": "烟草专卖生产企业许可证",
+      "action": "ignore"
+    },
+    {
+      "term": "烟草专卖批发企业许可证",
+      "action": "ignore"
+    },
+    {
+      "term": "烟草专卖零售许可证",
+      "action": "ignore"
+    },
+    {
+      "term": "许可范围",
+      "action": "ignore"
+    },
+    {
+      "term": "持证人",
+      "action": "ignore"
+    },
+    {
+      "term": "烟叶种植",
+      "action": "ignore"
+    },
+    {
+      "term": "烟叶收购",
+      "action": "ignore"
+    },
+    {
+      "term": "烟叶调拨",
+      "action": "ignore"
+    },
+    {
+      "term": "收购合同",
+      "action": "ignore"
+    },
+    {
+      "term": "烟叶收购价格",
+      "action": "ignore"
+    },
+    {
+      "term": "烟草种植",
+      "action": "ignore"
+    },
+    {
+      "term": "晾晒烟",
+      "action": "ignore"
+    },
+    {
+      "term": "烤烟叶",
+      "action": "ignore"
+    },
+    {
+      "term": "无准运证运输",
+      "action": "ignore"
+    },
+    {
+      "term": "托运",
+      "action": "ignore"
+    },
+    {
+      "term": "自运",
+      "action": "ignore"
+    },
+    {
+      "term": "承运",
+      "action": "ignore"
+    },
+    {
+      "term": "承运人",
+      "action": "ignore"
+    },
+    {
+      "term": "随货同行",
+      "action": "ignore"
+    },
+    {
+      "term": "证货不符",
+      "action": "ignore"
+    },
+    {
+      "term": "调出单位",
+      "action": "ignore"
+    },
+    {
+      "term": "调入单位",
+      "action": "ignore"
+    },
+    {
+      "term": "运达地点",
+      "action": "ignore"
+    },
+    {
+      "term": "假冒商标",
+      "action": "ignore"
+    },
+    {
+      "term": "假冒注册商标",
+      "action": "ignore"
+    },
+    {
+      "term": "注册商标商品",
+      "action": "ignore"
+    },
+    {
+      "term": "商标标识",
+      "action": "ignore"
+    },
+    {
+      "term": "商标注册",
+      "action": "ignore"
+    },
+    {
+      "term": "鉴别检验",
+      "action": "ignore"
+    },
+    {
+      "term": "鉴别检验报告",
+      "action": "ignore"
+    },
+    {
+      "term": "烟草质量检测站",
+      "action": "ignore"
+    },
+    {
+      "term": "质量检测机构",
+      "action": "ignore"
+    },
+    {
+      "term": "法定检测",
+      "action": "ignore"
+    },
+    {
+      "term": "伪劣烟草制品",
+      "action": "ignore"
+    },
+    {
+      "term": "假冒伪劣",
+      "action": "ignore"
+    },
+    {
+      "term": "非法生产",
+      "action": "ignore"
+    },
+    {
+      "term": "非法销售",
+      "action": "ignore"
+    },
+    {
+      "term": "非法经营",
+      "action": "ignore"
+    },
+    {
+      "term": "非法流入",
+      "action": "ignore"
+    },
+    {
+      "term": "出口倒流",
+      "action": "ignore"
+    },
+    {
+      "term": "专供出口",
+      "action": "ignore"
+    },
+    {
+      "term": "违法所得",
+      "action": "ignore"
+    },
+    {
+      "term": "责令改正",
+      "action": "ignore"
+    },
+    {
+      "term": "通报批评",
+      "action": "ignore"
+    },
+    {
+      "term": "罚款",
+      "action": "ignore"
+    },
+    {
+      "term": "追究刑事责任",
+      "action": "ignore"
+    },
+    {
+      "term": "移送司法机关",
+      "action": "ignore"
+    },
+    {
+      "term": "监督销毁",
+      "action": "ignore"
+    },
+    {
+      "term": "公开销毁",
+      "action": "ignore"
+    },
+    {
+      "term": "执法检查",
+      "action": "ignore"
+    },
+    {
+      "term": "监督检查",
+      "action": "ignore"
+    },
+    {
+      "term": "烟草专卖行政主管部门",
+      "action": "ignore"
+    },
+    {
+      "term": "专卖管理",
+      "action": "ignore"
+    },
+    {
+      "term": "追溯标识",
+      "action": "ignore"
+    },
+    {
+      "term": "专卖追溯标识",
+      "action": "ignore"
+    },
+    {
+      "term": "监控网络",
+      "action": "ignore"
+    },
+    {
+      "term": "联合执法",
+      "action": "ignore"
+    },
+    {
+      "term": "向未成年人销售",
+      "action": "ignore"
+    },
+    {
+      "term": "自动售货机",
+      "action": "ignore"
+    },
+    {
+      "term": "变相销售",
+      "action": "ignore"
+    },
+    {
+      "term": "互联网销售",
+      "action": "ignore"
+    },
+    {
+      "term": "网络售烟",
+      "action": "ignore"
+    },
+    {
+      "term": "寄递渠道",
+      "action": "ignore"
+    },
+    {
+      "term": "非法转让",
+      "action": "ignore"
+    },
+    {
+      "term": "买卖许可证",
+      "action": "ignore"
+    },
+    {
+      "term": "出租出借",
+      "action": "ignore"
+    },
+    {
+      "term": "中华",
+      "action": "ignore"
+    },
+    {
+      "term": "中华烟",
+      "action": "ignore"
+    },
+    {
+      "term": "软中华",
+      "action": "ignore"
+    },
+    {
+      "term": "硬中华",
+      "action": "ignore"
+    },
+    {
+      "term": "中华金中支",
+      "action": "ignore"
+    },
+    {
+      "term": "中华双中支",
+      "action": "ignore"
+    },
+    {
+      "term": "玉溪",
+      "action": "ignore"
+    },
+    {
+      "term": "玉溪烟",
+      "action": "ignore"
+    },
+    {
+      "term": "软玉溪",
+      "action": "ignore"
+    },
+    {
+      "term": "玉溪和谐",
+      "action": "ignore"
+    },
+    {
+      "term": "玉溪初心",
+      "action": "ignore"
+    },
+    {
+      "term": "玉溪翡翠",
+      "action": "ignore"
+    },
+    {
+      "term": "红塔山",
+      "action": "ignore"
+    },
+    {
+      "term": "红塔山经典",
+      "action": "ignore"
+    },
+    {
+      "term": "红塔山软经典",
+      "action": "ignore"
+    },
+    {
+      "term": "红塔山硬经典",
+      "action": "ignore"
+    },
+    {
+      "term": "芙蓉王",
+      "action": "ignore"
+    },
+    {
+      "term": "芙蓉王烟",
+      "action": "ignore"
+    },
+    {
+      "term": "硬芙蓉王",
+      "action": "ignore"
+    },
+    {
+      "term": "软芙蓉王",
+      "action": "ignore"
+    },
+    {
+      "term": "芙蓉王蓝",
+      "action": "ignore"
+    },
+    {
+      "term": "芙蓉王硬蓝",
+      "action": "ignore"
+    },
+    {
+      "term": "黄鹤楼",
+      "action": "ignore"
+    },
+    {
+      "term": "黄鹤楼烟",
+      "action": "ignore"
+    },
+    {
+      "term": "黄鹤楼软蓝",
+      "action": "ignore"
+    },
+    {
+      "term": "黄鹤楼硬珍",
+      "action": "ignore"
+    },
+    {
+      "term": "黄鹤楼峡谷情",
+      "action": "ignore"
+    },
+    {
+      "term": "利群",
+      "action": "ignore"
+    },
+    {
+      "term": "利群烟",
+      "action": "ignore"
+    },
+    {
+      "term": "利群新版",
+      "action": "ignore"
+    },
+    {
+      "term": "利群软红",
+      "action": "ignore"
+    },
+    {
+      "term": "利群阳光",
+      "action": "ignore"
+    },
+    {
+      "term": "利群休闲",
+      "action": "ignore"
+    },
+    {
+      "term": "南京",
+      "action": "ignore"
+    },
+    {
+      "term": "南京烟",
+      "action": "ignore"
+    },
+    {
+      "term": "南京红",
+      "action": "ignore"
+    },
+    {
+      "term": "南京炫赫门",
+      "action": "ignore"
+    },
+    {
+      "term": "南京雨花石",
+      "action": "ignore"
+    },
+    {
+      "term": "南京九五",
+      "action": "ignore"
+    },
+    {
+      "term": "云烟",
+      "action": "ignore"
+    },
+    {
+      "term": "云烟烟",
+      "action": "ignore"
+    },
+    {
+      "term": "云烟软珍",
+      "action": "ignore"
+    },
+    {
+      "term": "云烟紫",
+      "action": "ignore"
+    },
+    {
+      "term": "云烟大重九",
+      "action": "ignore"
+    },
+    {
+      "term": "云烟印象",
+      "action": "ignore"
+    },
+    {
+      "term": "苏烟",
+      "action": "ignore"
+    },
+    {
+      "term": "苏烟软金砂",
+      "action": "ignore"
+    },
+    {
+      "term": "苏烟铂晶",
+      "action": "ignore"
+    },
+    {
+      "term": "苏烟水韵",
+      "action": "ignore"
+    },
+    {
+      "term": "白沙",
+      "action": "ignore"
+    },
+    {
+      "term": "白沙烟",
+      "action": "ignore"
+    },
+    {
+      "term": "白沙和天下",
+      "action": "ignore"
+    },
+    {
+      "term": "白沙精品",
+      "action": "ignore"
+    },
+    {
+      "term": "白沙硬精品",
+      "action": "ignore"
+    },
+    {
+      "term": "双喜",
+      "action": "ignore"
+    },
+    {
+      "term": "双喜烟",
+      "action": "ignore"
+    },
+    {
+      "term": "双喜红",
+      "action": "ignore"
+    },
+    {
+      "term": "双喜经典",
+      "action": "ignore"
+    },
+    {
+      "term": "双喜软经典",
+      "action": "ignore"
+    },
+    {
+      "term": "红河",
+      "action": "ignore"
+    },
+    {
+      "term": "红河烟",
+      "action": "ignore"
+    },
+    {
+      "term": "红河88",
+      "action": "ignore"
+    },
+    {
+      "term": "红河99",
+      "action": "ignore"
+    },
+    {
+      "term": "泰山",
+      "action": "ignore"
+    },
+    {
+      "term": "泰山烟",
+      "action": "ignore"
+    },
+    {
+      "term": "泰山儒风",
+      "action": "ignore"
+    },
+    {
+      "term": "泰山颜悦",
+      "action": "ignore"
+    },
+    {
+      "term": "黄山",
+      "action": "ignore"
+    },
+    {
+      "term": "黄山烟",
+      "action": "ignore"
+    },
+    {
+      "term": "黄山红方印",
+      "action": "ignore"
+    },
+    {
+      "term": "黄山皖烟",
+      "action": "ignore"
+    },
+    {
+      "term": "七匹狼",
+      "action": "ignore"
+    },
+    {
+      "term": "七匹狼烟",
+      "action": "ignore"
+    },
+    {
+      "term": "七匹狼蓝",
+      "action": "ignore"
+    },
+    {
+      "term": "七匹狼金",
+      "action": "ignore"
+    },
+    {
+      "term": "娇子",
+      "action": "ignore"
+    },
+    {
+      "term": "娇子烟",
+      "action": "ignore"
+    },
+    {
+      "term": "娇子蓝",
+      "action": "ignore"
+    },
+    {
+      "term": "娇子宽窄",
+      "action": "ignore"
+    },
+    {
+      "term": "贵烟",
+      "action": "ignore"
+    },
+    {
+      "term": "贵烟烟",
+      "action": "ignore"
+    },
+    {
+      "term": "贵烟国酒香",
+      "action": "ignore"
+    },
+    {
+      "term": "贵烟福",
+      "action": "ignore"
+    },
+    {
+      "term": "兰州",
+      "action": "ignore"
+    },
+    {
+      "term": "兰州烟",
+      "action": "ignore"
+    },
+    {
+      "term": "兰州经典",
+      "action": "ignore"
+    },
+    {
+      "term": "兰州吉祥",
+      "action": "ignore"
+    },
+    {
+      "term": "黄金叶",
+      "action": "ignore"
+    },
+    {
+      "term": "黄金叶烟",
+      "action": "ignore"
+    },
+    {
+      "term": "黄金叶天叶",
+      "action": "ignore"
+    },
+    {
+      "term": "黄金叶乐途",
+      "action": "ignore"
+    },
+    {
+      "term": "长白山",
+      "action": "ignore"
+    },
+    {
+      "term": "长白山烟",
+      "action": "ignore"
+    },
+    {
+      "term": "长白山软红",
+      "action": "ignore"
+    },
+    {
+      "term": "长白山神韵",
+      "action": "ignore"
+    },
+    {
+      "term": "真龙",
+      "action": "ignore"
+    },
+    {
+      "term": "真龙烟",
+      "action": "ignore"
+    },
+    {
+      "term": "真龙海韵",
+      "action": "ignore"
+    },
+    {
+      "term": "真龙神韵",
+      "action": "ignore"
+    },
+    {
+      "term": "钻石",
+      "action": "ignore"
+    },
+    {
+      "term": "钻石烟",
+      "action": "ignore"
+    },
+    {
+      "term": "钻石荷花",
+      "action": "ignore"
+    },
+    {
+      "term": "钻石软荷花",
+      "action": "ignore"
+    },
+    {
+      "term": "冬虫夏草",
+      "action": "ignore"
+    },
+    {
+      "term": "冬虫夏草烟",
+      "action": "ignore"
+    },
+    {
+      "term": "冬虫夏草和润",
+      "action": "ignore"
+    },
+    {
+      "term": "红梅",
+      "action": "ignore"
+    },
+    {
+      "term": "红梅烟",
+      "action": "ignore"
+    },
+    {
+      "term": "红金龙",
+      "action": "ignore"
+    },
+    {
+      "term": "红金龙烟",
+      "action": "ignore"
+    },
+    {
+      "term": "软牡丹",
+      "action": "ignore"
+    },
+    {
+      "term": "牡丹",
+      "action": "ignore"
+    },
+    {
+      "term": "牡丹烟",
+      "action": "ignore"
+    },
+    {
+      "term": "哈德门",
+      "action": "ignore"
+    },
+    {
+      "term": "哈德门烟",
+      "action": "ignore"
+    },
+    {
+      "term": "大前门",
+      "action": "ignore"
+    },
+    {
+      "term": "大前门烟",
+      "action": "ignore"
+    },
+    {
+      "term": "红旗渠",
+      "action": "ignore"
+    },
+    {
+      "term": "红旗渠烟",
+      "action": "ignore"
+    },
+    {
+      "term": "金圣",
+      "action": "ignore"
+    },
+    {
+      "term": "金圣烟",
+      "action": "ignore"
+    },
+    {
+      "term": "金圣典藏",
+      "action": "ignore"
+    },
+    {
+      "term": "金桥",
+      "action": "ignore"
+    },
+    {
+      "term": "金桥烟",
+      "action": "ignore"
+    },
+    {
+      "term": "中南海",
+      "action": "ignore"
+    },
+    {
+      "term": "中南海烟",
+      "action": "ignore"
+    },
+    {
+      "term": "熊猫",
+      "action": "ignore"
+    },
+    {
+      "term": "熊猫烟",
+      "action": "ignore"
+    },
+    {
+      "term": "绿熊猫",
+      "action": "ignore"
+    },
+    {
+      "term": "天安门",
+      "action": "ignore"
+    },
+    {
+      "term": "天安门烟",
+      "action": "ignore"
     }
   ]
 }
