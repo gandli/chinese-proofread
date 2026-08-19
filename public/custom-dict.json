@@ -1895,10 +1895,6 @@
       "action": "ignore"
     },
     {
-      "term": "iqos",
-      "action": "ignore"
-    },
-    {
       "term": "IQOS",
       "action": "ignore"
     },

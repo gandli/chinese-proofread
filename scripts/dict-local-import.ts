@@ -76,6 +76,12 @@ const dict = parseCustomDict(readFileSync(dictPath, 'utf-8'));
 const existing = new Set(dict.entries.map((e) => e.term));
 let added = 0;
 for (const term of [...FUJIAN, ...IMPORTED, ...OTHER]) {
+  // 大小写不敏感去重（防 iqos/IQOS 类重复）
+  const dup = [...existing].find((t) => t.toLowerCase() === term.toLowerCase());
+  if (dup) {
+    console.warn(`跳过重复: "${term}" ≈ "${dup}"`);
+    continue;
+  }
   if (!existing.has(term)) {
     dict.entries.push({ term, action: 'ignore' });
     existing.add(term);
