@@ -91,11 +91,31 @@ const CIGARETTE_NAMES = [
 
 import { readFileSync, writeFileSync } from 'node:fs';
 
+interface CustomDictEntry {
+  term: string;
+  action: string;
+  correctTo?: string;
+  domains?: string[];
+}
+
 // ponytail: correctTo 里已有俗名映射，此处全 ignore（品名/法规术语都是合法词，防误报即可）
 const dictPath = path.resolve(__dirname, '../public/custom-dict.json');
-const dict = JSON.parse(readFileSync(dictPath, 'utf-8'));
 
-const existing = new Set(dict.entries.map((e: any) => e.term));
+function parseCustomDict(raw: string): { entries: CustomDictEntry[] } {
+  const parsed: unknown = JSON.parse(raw);
+  if (
+    typeof parsed !== 'object' ||
+    parsed === null ||
+    !Array.isArray((parsed as { entries?: unknown }).entries)
+  ) {
+    throw new Error('Invalid custom-dict.json: missing entries array');
+  }
+  return parsed as { entries: CustomDictEntry[] };
+}
+
+const dict = parseCustomDict(readFileSync(dictPath, 'utf-8'));
+
+const existing = new Set(dict.entries.map((e) => e.term));
 let added = 0;
 for (const term of [...LEGAL_TERMS, ...CIGARETTE_NAMES]) {
   if (!existing.has(term)) {
