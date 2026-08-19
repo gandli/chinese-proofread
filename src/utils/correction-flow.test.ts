@@ -77,16 +77,22 @@ describe("getCorrector", () => {
   it("初始化失败后可重试", async () => {
     // 首次 init 失败
     const { MacBertCorrector } = await import("../engines/macbert");
-    const mock = MacBertCorrector as unknown as ReturnType<typeof vi.fn>;
-    mock.mockImplementationOnce(() => ({
-      init: vi.fn().mockRejectedValue(new Error("model load failed")),
-    }));
+    const mock = vi.mocked(MacBertCorrector);
+    mock.mockImplementationOnce(
+      () =>
+        ({
+          init: vi.fn().mockRejectedValue(new Error("model load failed")),
+        }) as unknown as InstanceType<typeof MacBertCorrector>,
+    );
     await expect(getCorrector()).rejects.toThrow("model load failed");
 
     // 重置后重试成功
-    mock.mockImplementation(() => ({
-      init: vi.fn().mockResolvedValue(undefined),
-    }));
+    mock.mockImplementation(
+      () =>
+        ({
+          init: vi.fn().mockResolvedValue(undefined),
+        }) as unknown as InstanceType<typeof MacBertCorrector>,
+    );
     const c = await getCorrector();
     expect(c).toBeTruthy();
   });
@@ -96,13 +102,19 @@ describe("getCorrector", () => {
     let resolveInit: () => void;
     const pending = new Promise<void>((r) => (resolveInit = r));
     const { MacBertCorrector } = await import("../engines/macbert");
-    const mock = MacBertCorrector as unknown as ReturnType<typeof vi.fn>;
-    mock.mockImplementationOnce(() => ({
-      init: vi.fn().mockImplementation(() => pending),
-    }));
-    mock.mockImplementation(() => ({
-      init: vi.fn().mockResolvedValue(undefined),
-    }));
+    const mock = vi.mocked(MacBertCorrector);
+    mock.mockImplementationOnce(
+      () =>
+        ({
+          init: vi.fn().mockImplementation(() => pending),
+        }) as unknown as InstanceType<typeof MacBertCorrector>,
+    );
+    mock.mockImplementation(
+      () =>
+        ({
+          init: vi.fn().mockResolvedValue(undefined),
+        }) as unknown as InstanceType<typeof MacBertCorrector>,
+    );
 
     // 两次并发调用，均 await 同一 correctorInit
     const p1 = getCorrector();
