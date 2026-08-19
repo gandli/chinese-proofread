@@ -5,6 +5,7 @@ import "./popup.css";
 import { MacBertCorrector } from "../../src/engines/macbert";
 import { splitLongText, mergeDiffs } from "../../src/utils/splitter";
 import { loadCustomDict, applyCustomDict } from "../../src/utils/custom-dict";
+import type { Diff } from "../../src/types";
 
 let corrector: MacBertCorrector | null = null;
 let correctorInit: Promise<MacBertCorrector> | null = null;
@@ -29,13 +30,6 @@ type Status =
   | "done"
   | "error"
   | "permission-denied";
-
-interface Diff {
-  position: number;
-  original: string;
-  corrected: string;
-  confidence: number;
-}
 
 interface TestHook {
   setState: (

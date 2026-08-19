@@ -1,4 +1,6 @@
 /** 自定义词典加载器（扩展环境：chrome.runtime.getURL） */
+import { log } from "../lib/logger";
+
 export interface CustomDictEntry {
   term: string;
   action: "ignore" | "correct";
@@ -20,8 +22,6 @@ export interface Diff {
 
 let dictCache: CustomDict | null = null;
 let dictLoaded = false;
-
-import { log } from "../lib/logger";
 
 /** 加载词典（扩展环境：chrome.runtime.getURL / fetch） */
 export async function loadCustomDict(): Promise<CustomDict> {
@@ -56,6 +56,12 @@ export async function loadCustomDict(): Promise<CustomDict> {
 export function reloadCustomDict(): void {
   dictCache = null;
   dictLoaded = false;
+}
+
+/** 注入词典缓存（Node 测试环境用：真实词典 → 复用同一份 findMatches/applyCustomDict） */
+export function setDictCache(dict: CustomDict): void {
+  dictCache = dict;
+  dictLoaded = true;
 }
 
 /** 最长前缀匹配：返回命中的 entry 及其在文本中的位置 */

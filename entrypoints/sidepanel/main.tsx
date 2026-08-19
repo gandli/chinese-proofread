@@ -1,14 +1,8 @@
 import { useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { isFromThisExtension } from "../../src/utils/extension-messaging";
+import type { Diff } from "../../src/types";
 import "./sidepanel.css";
-
-interface Diff {
-  position: number;
-  original: string;
-  corrected: string;
-  confidence: number;
-}
 
 interface SidePanelState {
   diffs: Diff[];

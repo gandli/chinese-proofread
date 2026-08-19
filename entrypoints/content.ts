@@ -3,6 +3,7 @@
 import { Readability } from "@mozilla/readability";
 
 import { isFromThisExtension } from "../src/utils/extension-messaging";
+import type { Diff } from "../src/types";
 
 // Polyfill: Range.replaceWith (ES2022) - TS lib may not include it yet
 declare global {
@@ -60,13 +61,6 @@ export default defineContentScript({
   },
 });
 
-interface Diff {
-  position: number;
-  original: string;
-  corrected: string;
-  confidence: number;
-}
-
 const STYLE_ID = "ps-proof-style";
 const UNDERLINE = "wavy";
 const COLOR = "#ef4444";
@@ -114,10 +108,13 @@ class ProofHighlighter {
       jumpTo: (diff: Diff) => void;
     }
 
-    // 调试用：暴露实例到 window（方便手动测试）
-    (
-      window as unknown as { __proofHighlighter?: ProofHighlighterInstance }
-    ).__proofHighlighter = this;
+    // 调试用：仅开发模式暴露实例到 window（方便手动测试）
+    // COMMAND === "serve" 等价于 Vite 的 import.meta.env.DEV（wxt 类型未声明 DEV）
+    if (import.meta.env.COMMAND === "serve") {
+      (
+        window as unknown as { __proofHighlighter?: ProofHighlighterInstance }
+      ).__proofHighlighter = this;
+    }
   }
 
   /**
