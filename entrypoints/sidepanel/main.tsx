@@ -23,20 +23,22 @@ function DiffItem({ diff, index, onAccept, onIgnore, onJump }: {
   onJump: (d: Diff) => void;
 }) {
   return (
-    <div className="diff-item">
-      <div className="diff-header">
-        <span className="diff-index">#{index + 1}</span>
-        <span className="diff-confidence">{(diff.confidence * 100).toFixed(0)}%</span>
+    <div className="diff-item bg-surface border border-border rounded-[10px] p-3 transition-[box-shadow,border-color] duration-150 hover:shadow-[0_4px_16px_rgba(15,23,42,0.08)] hover:border-border-subtle">
+      <div className="diff-header flex items-center justify-between mb-1.5">
+        <span className="diff-index text-xs font-semibold text-muted">#{index + 1}</span>
+        <span className="diff-confidence text-[11px] text-success bg-success-bg px-1.5 py-0.5 rounded tabular-nums">
+          {(diff.confidence * 100).toFixed(0)}%
+        </span>
       </div>
-      <div className="diff-change">
-        <del>{diff.original}</del>
-        <span className="arrow">→</span>
-        <strong>{diff.corrected}</strong>
+      <div className="diff-change text-sm leading-relaxed mb-2.5 flex items-center gap-1.5 flex-wrap">
+        <del className="text-error line-through">{diff.original}</del>
+        <span className="arrow text-[#94a3b8]">→</span>
+        <strong className="text-success text-[15px]">{diff.corrected}</strong>
       </div>
-      <div className="diff-actions">
-        <button className="btn btn-accept" onClick={() => onAccept(diff)}>采用</button>
-        <button className="btn btn-ignore" onClick={() => onIgnore(diff)}>忽略</button>
-        <button className="btn btn-jump" onClick={() => onJump(diff)}>跳转</button>
+      <div className="diff-actions flex gap-2">
+        <button className="btn px-3 py-1.5 rounded-md text-xs font-medium cursor-pointer border-none transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-[0.96] bg-success text-white hover:bg-[#065f46]" onClick={() => onAccept(diff)}>采用</button>
+        <button className="btn px-3 py-1.5 rounded-md text-xs font-medium cursor-pointer border transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-[0.96] bg-white text-text-secondary border-border-subtle hover:bg-background-subtle hover:border-[#94a3b8]" onClick={() => onIgnore(diff)}>忽略</button>
+        <button className="btn px-3 py-1.5 rounded-md text-xs font-medium cursor-pointer border-none transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-[0.96] bg-primary text-white hover:bg-primary-hover" onClick={() => onJump(diff)}>跳转</button>
       </div>
     </div>
   );
@@ -130,26 +132,28 @@ function SidePanel() {
 
   if (state.diffs.length === 0) {
     return (
-      <div className="empty">
-        <svg className="icon" viewBox="0 0 20 10" fill="none" aria-hidden="true">
+      <div className="empty flex-1 flex flex-col items-center justify-center text-[#94a3b8] text-center p-6">
+        <svg className="icon w-12 h-6 mb-3" viewBox="0 0 20 10" fill="none" aria-hidden="true">
           <path d="M1 6 q2.25 -4 4.5 0 q2.25 4 4.5 0 q2.25 -4 4.5 0 q2.25 4 4.5 0" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" />
         </svg>
-        <p>暂无错别字</p>
-        <span className="hint">点击工具栏「校对当前页面」开始</span>
+        <p className="text-sm font-medium text-muted mb-1">暂无错别字</p>
+        <span className="hint text-xs">点击工具栏「校对当前页面」开始</span>
       </div>
     );
   }
 
   return (
-    <div className="panel">
-      <header className="panel-header">
-        <h1>校对结果 <span className="count">{state.diffs.length} 处</span></h1>
-        <div className="batch-actions">
-          <button className="btn btn-secondary" onClick={handleAcceptAll}>全部采用</button>
-          <button className="btn btn-danger" onClick={handleIgnoreAll}>全部忽略</button>
+    <div className="panel h-screen flex flex-col bg-white overflow-hidden">
+      <header className="panel-header flex items-center justify-between px-4 py-3.5 border-b border-border bg-surface shrink-0">
+        <h1 className="text-[15px] font-semibold text-text">
+          校对结果 <span className="count text-xs font-normal text-error bg-error-bg px-2 py-0.5 rounded-full ml-2">{state.diffs.length} 处</span>
+        </h1>
+        <div className="batch-actions flex gap-2">
+          <button className="btn px-3 py-1.5 rounded-md text-xs font-medium cursor-pointer border-none transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-[0.96] bg-[#e5e9f0] text-text hover:bg-border-subtle" onClick={handleAcceptAll}>全部采用</button>
+          <button className="btn px-3 py-1.5 rounded-md text-xs font-medium cursor-pointer border-none transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-[0.96] bg-error-bg text-error hover:bg-[#fecaca]" onClick={handleIgnoreAll}>全部忽略</button>
         </div>
       </header>
-      <div className="diff-list">
+      <div className="diff-list flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-3">
         {state.diffs.map((diff, i) => (
           <DiffItem key={i} diff={diff} index={i}
             onAccept={handleAccept} onIgnore={handleIgnore} onJump={handleJump} />
