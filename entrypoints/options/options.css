@@ -1,20 +1,57 @@
 /* Options 页面样式 */
-@import '../../src/styles/global.css';
+@import "../../src/styles/global.css";
 
 /* 保留的非 utility 部分：动画、文件输入、表格默认 */
-@keyframes slideIn { from { opacity: 0; transform: translateX(100%); } to { opacity: 1; transform: translateX(0); } }
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
 
-.toast { animation: slideIn 0.2s ease; }
+.toast {
+  animation: slideIn 0.2s ease;
+}
 
-.form-row select[multiple] { min-height: 80px; }
+.form-row select[multiple] {
+  min-height: 80px;
+}
 
-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--color-background-subtle); }
-tr:last-child td { border-bottom: none; }
-td code { background: var(--color-background-subtle); padding: 2px 6px; border-radius: 4px; font-family: inherit; font-size: 13px; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+th,
+td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--color-background-subtle);
+}
+tr:last-child td {
+  border-bottom: none;
+}
+td code {
+  background: var(--color-background-subtle);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 13px;
+}
 
 /* 减少动效偏好：扁平化入场与按压 */
 @media (prefers-reduced-motion: reduce) {
-  .toast { animation: none; }
-  .tab, .btn, .btn-icon { transform: none !important; transition: none !important; }
+  .toast {
+    animation: none;
+  }
+  .tab,
+  .btn,
+  .btn-icon {
+    transform: none !important;
+    transition: none !important;
+  }
 }
