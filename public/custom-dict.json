@@ -1249,6 +1249,686 @@
     {
       "term": "天安门烟",
       "action": "ignore"
+    },
+    {
+      "term": "七匹狼通仙",
+      "action": "ignore"
+    },
+    {
+      "term": "七匹狼通运",
+      "action": "ignore"
+    },
+    {
+      "term": "七匹狼蓝狼",
+      "action": "ignore"
+    },
+    {
+      "term": "七匹狼红狼",
+      "action": "ignore"
+    },
+    {
+      "term": "七匹狼白狼",
+      "action": "ignore"
+    },
+    {
+      "term": "七匹狼软灰",
+      "action": "ignore"
+    },
+    {
+      "term": "七匹狼硬红",
+      "action": "ignore"
+    },
+    {
+      "term": "七匹狼古田",
+      "action": "ignore"
+    },
+    {
+      "term": "七匹狼金砖",
+      "action": "ignore"
+    },
+    {
+      "term": "七匹狼翠碧",
+      "action": "ignore"
+    },
+    {
+      "term": "石狮",
+      "action": "ignore"
+    },
+    {
+      "term": "石狮烟",
+      "action": "ignore"
+    },
+    {
+      "term": "石狮软红",
+      "action": "ignore"
+    },
+    {
+      "term": "石狮硬红",
+      "action": "ignore"
+    },
+    {
+      "term": "石狮平安",
+      "action": "ignore"
+    },
+    {
+      "term": "石狮蓝",
+      "action": "ignore"
+    },
+    {
+      "term": "土楼",
+      "action": "ignore"
+    },
+    {
+      "term": "土楼烟",
+      "action": "ignore"
+    },
+    {
+      "term": "土楼传奇",
+      "action": "ignore"
+    },
+    {
+      "term": "土楼梦",
+      "action": "ignore"
+    },
+    {
+      "term": "土楼红",
+      "action": "ignore"
+    },
+    {
+      "term": "古田",
+      "action": "ignore"
+    },
+    {
+      "term": "古田烟",
+      "action": "ignore"
+    },
+    {
+      "term": "古田金中支",
+      "action": "ignore"
+    },
+    {
+      "term": "古田红军",
+      "action": "ignore"
+    },
+    {
+      "term": "古田圣地",
+      "action": "ignore"
+    },
+    {
+      "term": "古田红星",
+      "action": "ignore"
+    },
+    {
+      "term": "红狼",
+      "action": "ignore"
+    },
+    {
+      "term": "红狼烟",
+      "action": "ignore"
+    },
+    {
+      "term": "灰狼",
+      "action": "ignore"
+    },
+    {
+      "term": "白狼",
+      "action": "ignore"
+    },
+    {
+      "term": "富健",
+      "action": "ignore"
+    },
+    {
+      "term": "富健烟",
+      "action": "ignore"
+    },
+    {
+      "term": "富健红",
+      "action": "ignore"
+    },
+    {
+      "term": "富健蓝",
+      "action": "ignore"
+    },
+    {
+      "term": "乘风",
+      "action": "ignore"
+    },
+    {
+      "term": "乘风烟",
+      "action": "ignore"
+    },
+    {
+      "term": "乘风破浪",
+      "action": "ignore"
+    },
+    {
+      "term": "金桥英伦",
+      "action": "ignore"
+    },
+    {
+      "term": "金桥红",
+      "action": "ignore"
+    },
+    {
+      "term": "金桥蓝",
+      "action": "ignore"
+    },
+    {
+      "term": "武夷",
+      "action": "ignore"
+    },
+    {
+      "term": "武夷烟",
+      "action": "ignore"
+    },
+    {
+      "term": "武夷红袍",
+      "action": "ignore"
+    },
+    {
+      "term": "武夷大红袍",
+      "action": "ignore"
+    },
+    {
+      "term": "海峡",
+      "action": "ignore"
+    },
+    {
+      "term": "海峡烟",
+      "action": "ignore"
+    },
+    {
+      "term": "海峡两岸",
+      "action": "ignore"
+    },
+    {
+      "term": "鹭江",
+      "action": "ignore"
+    },
+    {
+      "term": "鹭江烟",
+      "action": "ignore"
+    },
+    {
+      "term": "闽江",
+      "action": "ignore"
+    },
+    {
+      "term": "闽江烟",
+      "action": "ignore"
+    },
+    {
+      "term": "鼓浪屿",
+      "action": "ignore"
+    },
+    {
+      "term": "鼓浪屿烟",
+      "action": "ignore"
+    },
+    {
+      "term": "厦门",
+      "action": "ignore"
+    },
+    {
+      "term": "厦门烟",
+      "action": "ignore"
+    },
+    {
+      "term": "龙岩",
+      "action": "ignore"
+    },
+    {
+      "term": "龙岩烟",
+      "action": "ignore"
+    },
+    {
+      "term": "红梅软",
+      "action": "ignore"
+    },
+    {
+      "term": "红梅硬",
+      "action": "ignore"
+    },
+    {
+      "term": "红金龙蓝",
+      "action": "ignore"
+    },
+    {
+      "term": "红金龙红",
+      "action": "ignore"
+    },
+    {
+      "term": "万宝路",
+      "action": "ignore"
+    },
+    {
+      "term": "万宝路烟",
+      "action": "ignore"
+    },
+    {
+      "term": "万宝路硬",
+      "action": "ignore"
+    },
+    {
+      "term": "万宝路软",
+      "action": "ignore"
+    },
+    {
+      "term": "万宝路冰",
+      "action": "ignore"
+    },
+    {
+      "term": "万宝路薄荷",
+      "action": "ignore"
+    },
+    {
+      "term": "555",
+      "action": "ignore"
+    },
+    {
+      "term": "555烟",
+      "action": "ignore"
+    },
+    {
+      "term": "三五",
+      "action": "ignore"
+    },
+    {
+      "term": "三五烟",
+      "action": "ignore"
+    },
+    {
+      "term": "三五经典",
+      "action": "ignore"
+    },
+    {
+      "term": "三五国际",
+      "action": "ignore"
+    },
+    {
+      "term": "骆驼",
+      "action": "ignore"
+    },
+    {
+      "term": "骆驼烟",
+      "action": "ignore"
+    },
+    {
+      "term": "骆驼无嘴",
+      "action": "ignore"
+    },
+    {
+      "term": "骆驼软",
+      "action": "ignore"
+    },
+    {
+      "term": "骆驼硬",
+      "action": "ignore"
+    },
+    {
+      "term": "七星",
+      "action": "ignore"
+    },
+    {
+      "term": "七星烟",
+      "action": "ignore"
+    },
+    {
+      "term": "七星皇",
+      "action": "ignore"
+    },
+    {
+      "term": "七星金",
+      "action": "ignore"
+    },
+    {
+      "term": "七星薄荷",
+      "action": "ignore"
+    },
+    {
+      "term": "好彩",
+      "action": "ignore"
+    },
+    {
+      "term": "好彩烟",
+      "action": "ignore"
+    },
+    {
+      "term": "好彩红",
+      "action": "ignore"
+    },
+    {
+      "term": "好彩蓝",
+      "action": "ignore"
+    },
+    {
+      "term": "好彩金",
+      "action": "ignore"
+    },
+    {
+      "term": "希尔顿",
+      "action": "ignore"
+    },
+    {
+      "term": "希尔顿烟",
+      "action": "ignore"
+    },
+    {
+      "term": "希尔顿红",
+      "action": "ignore"
+    },
+    {
+      "term": "希尔顿蓝",
+      "action": "ignore"
+    },
+    {
+      "term": "箭牌",
+      "action": "ignore"
+    },
+    {
+      "term": "箭牌烟",
+      "action": "ignore"
+    },
+    {
+      "term": "箭牌薄荷",
+      "action": "ignore"
+    },
+    {
+      "term": "登喜路",
+      "action": "ignore"
+    },
+    {
+      "term": "登喜路烟",
+      "action": "ignore"
+    },
+    {
+      "term": "建牌",
+      "action": "ignore"
+    },
+    {
+      "term": "建牌烟",
+      "action": "ignore"
+    },
+    {
+      "term": "百乐门",
+      "action": "ignore"
+    },
+    {
+      "term": "百乐门烟",
+      "action": "ignore"
+    },
+    {
+      "term": "柔和七星",
+      "action": "ignore"
+    },
+    {
+      "term": "云斯顿",
+      "action": "ignore"
+    },
+    {
+      "term": "云斯顿烟",
+      "action": "ignore"
+    },
+    {
+      "term": "总督",
+      "action": "ignore"
+    },
+    {
+      "term": "总督烟",
+      "action": "ignore"
+    },
+    {
+      "term": "黑冰",
+      "action": "ignore"
+    },
+    {
+      "term": "黑冰万宝路",
+      "action": "ignore"
+    },
+    {
+      "term": "双爆珠",
+      "action": "ignore"
+    },
+    {
+      "term": "铁塔猫",
+      "action": "ignore"
+    },
+    {
+      "term": "铁塔猫烟",
+      "action": "ignore"
+    },
+    {
+      "term": "阿里山",
+      "action": "ignore"
+    },
+    {
+      "term": "阿里山烟",
+      "action": "ignore"
+    },
+    {
+      "term": "宝岛",
+      "action": "ignore"
+    },
+    {
+      "term": "宝岛烟",
+      "action": "ignore"
+    },
+    {
+      "term": "kent",
+      "action": "ignore"
+    },
+    {
+      "term": "健牌",
+      "action": "ignore"
+    },
+    {
+      "term": "L&M",
+      "action": "ignore"
+    },
+    {
+      "term": "威斯",
+      "action": "ignore"
+    },
+    {
+      "term": "威斯烟",
+      "action": "ignore"
+    },
+    {
+      "term": "雪茄",
+      "action": "ignore"
+    },
+    {
+      "term": "手工雪茄",
+      "action": "ignore"
+    },
+    {
+      "term": "机制雪茄",
+      "action": "ignore"
+    },
+    {
+      "term": "小雪茄",
+      "action": "ignore"
+    },
+    {
+      "term": "雪茄型",
+      "action": "ignore"
+    },
+    {
+      "term": "哈瓦那",
+      "action": "ignore"
+    },
+    {
+      "term": "哈瓦那雪茄",
+      "action": "ignore"
+    },
+    {
+      "term": "古巴雪茄",
+      "action": "ignore"
+    },
+    {
+      "term": "蒙特",
+      "action": "ignore"
+    },
+    {
+      "term": "蒙特雪茄",
+      "action": "ignore"
+    },
+    {
+      "term": "罗密欧",
+      "action": "ignore"
+    },
+    {
+      "term": "罗密欧与朱丽叶",
+      "action": "ignore"
+    },
+    {
+      "term": "高希霸",
+      "action": "ignore"
+    },
+    {
+      "term": "高希霸雪茄",
+      "action": "ignore"
+    },
+    {
+      "term": "威士忌桶",
+      "action": "ignore"
+    },
+    {
+      "term": "大卫杜夫",
+      "action": "ignore"
+    },
+    {
+      "term": "大卫杜夫雪茄",
+      "action": "ignore"
+    },
+    {
+      "term": "雪茄剪",
+      "action": "ignore"
+    },
+    {
+      "term": "雪茄盒",
+      "action": "ignore"
+    },
+    {
+      "term": "烟斗",
+      "action": "ignore"
+    },
+    {
+      "term": "烟斗烟丝",
+      "action": "ignore"
+    },
+    {
+      "term": "斗丝",
+      "action": "ignore"
+    },
+    {
+      "term": "烟斗丝",
+      "action": "ignore"
+    },
+    {
+      "term": "石楠木",
+      "action": "ignore"
+    },
+    {
+      "term": "石楠木烟斗",
+      "action": "ignore"
+    },
+    {
+      "term": "鼻烟",
+      "action": "ignore"
+    },
+    {
+      "term": "鼻烟壶",
+      "action": "ignore"
+    },
+    {
+      "term": "嚼烟",
+      "action": "ignore"
+    },
+    {
+      "term": "口含烟",
+      "action": "ignore"
+    },
+    {
+      "term": "无烟烟草",
+      "action": "ignore"
+    },
+    {
+      "term": "含烟",
+      "action": "ignore"
+    },
+    {
+      "term": "电子烟烟弹",
+      "action": "ignore"
+    },
+    {
+      "term": "烟弹",
+      "action": "ignore"
+    },
+    {
+      "term": "雾化芯",
+      "action": "ignore"
+    },
+    {
+      "term": "电子烟杆",
+      "action": "ignore"
+    },
+    {
+      "term": "加热不燃烧烟具",
+      "action": "ignore"
+    },
+    {
+      "term": "烟具",
+      "action": "ignore"
+    },
+    {
+      "term": "加热棒",
+      "action": "ignore"
+    },
+    {
+      "term": "低温烟",
+      "action": "ignore"
+    },
+    {
+      "term": "HNB",
+      "action": "ignore"
+    },
+    {
+      "term": "iqos",
+      "action": "ignore"
+    },
+    {
+      "term": "IQOS",
+      "action": "ignore"
+    },
+    {
+      "term": "悦刻",
+      "action": "ignore"
+    },
+    {
+      "term": "悦刻烟弹",
+      "action": "ignore"
+    },
+    {
+      "term": "烟标",
+      "action": "ignore"
+    },
+    {
+      "term": "烟标收藏",
+      "action": "ignore"
+    },
+    {
+      "term": "老烟标",
+      "action": "ignore"
+    },
+    {
+      "term": "烟卡",
+      "action": "ignore"
+    },
+    {
+      "term": "烟画",
+      "action": "ignore"
     }
   ]
 }
