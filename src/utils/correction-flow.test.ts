@@ -90,4 +90,26 @@ describe("getCorrector", () => {
     const c = await getCorrector();
     expect(c).toBeTruthy();
   });
+
+  it("并发调用返回同一实例（init 进行中不返回 null）", async () => {
+    // init 挂起，等待 resolve 后才返回
+    let resolveInit: () => void;
+    const pending = new Promise<void>((r) => (resolveInit = r));
+    const { MacBertCorrector } = await import("../engines/macbert");
+    const mock = MacBertCorrector as unknown as ReturnType<typeof vi.fn>;
+    mock.mockImplementationOnce(() => ({
+      init: vi.fn().mockImplementation(() => pending),
+    }));
+    mock.mockImplementation(() => ({
+      init: vi.fn().mockResolvedValue(undefined),
+    }));
+
+    // 两次并发调用，均 await 同一 correctorInit
+    const p1 = getCorrector();
+    const p2 = getCorrector();
+    resolveInit!();
+    const [c1, c2] = await Promise.all([p1, p2]);
+    expect(c1).toBe(c2); // 同一实例
+    expect(c1).toBeTruthy();
+  });
 });
