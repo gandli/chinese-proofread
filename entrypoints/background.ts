@@ -1,5 +1,6 @@
 // Background: 消息路由（引擎已迁至 popup —— SW 无法初始化 onnxruntime wasm）
 import { defineBackground } from "wxt/sandbox";
+import { log } from "../src/lib/logger";
 import { isFromThisExtension } from "../src/utils/extension-messaging";
 
 export default defineBackground(() => {
@@ -27,6 +28,7 @@ export default defineBackground(() => {
       return true; // 异步响应
     }
   });
-  // eslint-disable-next-line no-console -- background entry point
-  console.log("[chinese-proofread] background ready (engine runs in popup)");
+  log.info("background ready (engine runs in popup)", {
+    component: "background",
+  });
 });

@@ -83,6 +83,25 @@ describe("splitLongText", () => {
       expect(c.offset + c.text.length).toBeLessThanOrEqual(text.length);
     }
   });
+
+  it("超长无标点句 + overlap==maxChars-1 不卡死", () => {
+    const text = "啊".repeat(1000);
+    const chunks = splitLongText(text, 100, 99);
+    expect(chunks.length).toBeGreaterThan(1);
+    for (const c of chunks) {
+      expect(c.text.length).toBeGreaterThan(0);
+      expect(c.text.length).toBeLessThanOrEqual(100);
+    }
+    // 不无限循环即 pass；额外断言末片不空洞
+    expect(chunks[chunks.length - 1].text.length).toBeGreaterThan(0);
+  });
+
+  it("单句恰好 maxChars 时不产生空 chunk", () => {
+    const text = "啊".repeat(510);
+    const chunks = splitLongText(text, 510, 20);
+    expect(chunks).toHaveLength(1);
+    expect(chunks[0].text).toBe(text);
+  });
 });
 
 describe("mergeDiffs", () => {
