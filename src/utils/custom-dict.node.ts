@@ -15,12 +15,9 @@ export async function loadCustomDictNode(): Promise<CustomDict> {
     const parsed = JSON.parse(content) as CustomDict;
     nodeDictCache = parsed;
     setDictCache(parsed);
-    // eslint-disable-next-line no-console -- test/dev logging
-    console.log("[custom-dict-node] Loaded entries:", parsed.entries.length);
   } catch (e) {
-    // eslint-disable-next-line no-console -- test/dev logging
-    console.error("[custom-dict-node] Load failed:", e);
     nodeDictCache = { version: 1, entries: [] };
+    void e; // 静默回退空词典，测试环境无需落地日志
   }
   return nodeDictCache!;
 }

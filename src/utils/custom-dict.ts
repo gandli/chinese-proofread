@@ -24,7 +24,17 @@ export async function loadCustomDict(): Promise<CustomDict> {
     if (typeof chrome !== "undefined" && chrome.runtime?.getURL) {
       const res = await fetch(chrome.runtime.getURL("custom-dict.json"));
       if (res.ok) {
-        dictCache = await res.json();
+        const raw = (await res.json()) as unknown;
+        const validated = validateCustomDict(raw);
+        if (validated) {
+          dictCache = validated;
+          dictLoaded = true;
+          return dictCache!;
+        }
+        log.warn("custom-dict.json 校验失败，已回退空词典", {
+          component: "custom-dict",
+        });
+        dictCache = { version: 1, entries: [] };
         dictLoaded = true;
         return dictCache!;
       }
@@ -126,3 +136,36 @@ export function applyCustomDict(text: string, diffs: Diff[]): Diff[] {
 
 /** 测试导出 */
 export { findMatches, dictCache };
+
+/** 最小校验：非法条目 warn 并跳过，整体结构非法则返回 null */
+function validateCustomDict(raw: unknown): CustomDict | null {
+  if (!raw || typeof raw !== "object") return null;
+  const obj = raw as Record<string, unknown>;
+  if (!Array.isArray(obj.entries)) return null;
+  const cleaned: CustomDictEntry[] = [];
+  for (const e of obj.entries as unknown[]) {
+    if (!e || typeof e !== "object") {
+      log.warn("跳过非法词典条目（非对象）", { component: "custom-dict" });
+      continue;
+    }
+    const r = e as Record<string, unknown>;
+    if (typeof r.term !== "string" || !r.term) {
+      log.warn("跳过非法词典条目（term 非法）", { component: "custom-dict" });
+      continue;
+    }
+    if (r.action !== "ignore" && r.action !== "correct") {
+      log.warn("跳过非法词典条目（action 非法）", {
+        component: "custom-dict",
+      });
+      continue;
+    }
+    if (r.action === "correct" && typeof r.correctTo !== "string") {
+      log.warn("跳过非法词典条目（correct 缺 correctTo）", {
+        component: "custom-dict",
+      });
+      continue;
+    }
+    cleaned.push(e as CustomDictEntry);
+  }
+  return { version: typeof obj.version === "number" ? obj.version : 1, entries: cleaned };
+}
