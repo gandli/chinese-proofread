@@ -34,12 +34,15 @@ jobs:
       - name: Generate checksums
         run: |
           cd .output
-          sha256sum chinese-proofread-*_chrome.zip > checksums.txt
+          sha256sum chinese-proofread-*-chrome.zip > checksums.txt
           cd ..
 
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          VERSION="'' GITHUB_REF#refs/tags/''"
-          gh release create "$VERSION"             --notes-file .release-notes.md             .output/chinese-proofread-*_chrome.zip             .output/checksums.txt
+          VERSION="${GITHUB_REF#refs/tags/}"
+          gh release create "$VERSION" \
+            --notes-file .release-notes.md \
+            .output/chinese-proofread-*-chrome.zip \
+            .output/checksums.txt
