@@ -34,6 +34,9 @@ export async function loadCustomDict(): Promise<CustomDict> {
         log.warn("custom-dict.json 校验失败，已回退空词典", {
           component: "custom-dict",
         });
+        dictCache = { version: 1, entries: [] };
+        dictLoaded = true;
+        return dictCache!;
       }
     }
     // 扩展环境未命中：回退到空词典（Node 环境加载由单独模块处理）
