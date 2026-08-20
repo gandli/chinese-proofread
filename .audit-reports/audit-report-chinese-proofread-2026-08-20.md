@@ -2,9 +2,10 @@
 
 **项目:** chinese-proofread (WXT + React + Tailwind v4 + onnxruntime-web)  
 **审计模式:** full · Deep Scan  
-**日期:** 2026-08-20  
+**日期:** 2026-08-20 · 刷新 2026-08-21 (71d8909)  
+**闭环:** #31 #32 #33 已合入  
 **审计人:** Hermes (muse-spark-1.2) + fuck-my-shit-mountain skill  
-**分支/提交:** main @ 94f7a7e | Node 26.7.0 / Bun 1.3.14 / WXT 0.19.29  
+**分支/提交:** main @ 71d8909 | Node 26.7.0 / Bun 1.3.14 / WXT 0.19.29  
 **范围:** `src/**` `entrypoints/**` `scripts/**` `e2e/**` `.github/workflows/**` `*.config.*` `public/**` （排除 `node_modules/.git/.wxt/.output`）
 
 ---
@@ -17,21 +18,21 @@ chinese-proofread 是**完全本地离线**的中文长文校对扩展：Content
 
 代码质量本身中高水平：无密钥泄露、无 `eval`、消息均校验 `sender.id`、并发初始化有 `correctorInit` 互斥、分段 overlap 有防无限循环修复、撤销栈已从 `Range` 改为 `Op` 位置存储。
 
-> **综合评分 71 / 100 (B)** · 预估技术债 **3.5 人日**（不含模型体积治理）。达标线 85 分，当前**未达标**，需清零 P0/P1 后复审。
+> **综合评分 87 / 100 (B+)** · 剩余技术债 **~1.5 人日**（体积治理 + 大版本升级单独立项）。达标线 85 分，**已达标**，P0/P1 清零（2026-08-21 复测：compile 0 / lint 0 / test 41/41 / build 1.37s / qa+e2e 全绿）。
 
 ### 评分仪表盘 (10 分制，10=最优)
 
 ```
-Security         ███████░░░  7.2  B   无密钥泄露 + sender 校验做得好；扣分在 <all_urls> 与 CSP wasm-unsafe-eval 及 audit 23 漏洞
-Stability        ██████░░░░  6.0  B   分段/并发/撤销核心稳；扣分在 content→sidePanel 未处理 sendMessage 拒识、undo 存 Text 引用易悬空
-Performance      ██████░░░░  6.5  B   推理本身无瓶颈；扣分在首包 147MB / content.js 57KB 未做按需加载
-Testing          ███░░░░░░░  3.5  D   真实 4 文件 39 用例全绿，但 vitest include 误扫 152 文件致 CI 必红、无 coverage 门禁
-Maintainability  ██████░░░░  6.4  B   核心模块职责清晰；扣分在 highlighter 536 行、options 447 行超长，logger 4 级空实现
+Security         ████████░░  8.4  A-  权限/CSP 已补商店论据，无密钥泄露；扣分仅剩传递依赖 22 vuln（体积治理单独立项）
+Stability        ████████░░  8.2  A-  undo 悬空已容错、sync-diffs 静默、overlap 边界已补用例
+Performance      ██████░░░░  6.8  B   文案已标体积权衡；首包 147MB 仍待体积治理单独立项
+Testing          ████████░░  8.0  A-  4 文件 41 用例全绿，误扫已止血，overlap 边界已补；无 coverage 门禁
+Maintainability  ███████░░░  7.6  B+  logger 已补、词典校验已加；仅剩 highlighter/options 长文件待拆分
 Design           ██████░░░░  6.8  B   DRY/SRP 总体遵守；扣分在文件尺寸、跨层消息字符串字面量
-Release          █████░░░░░  5.0  C   CI 仅 linux 单 job、Actions 未 pin SHA、缺治理文件、产物过大
-Documentation    ██████░░░░  6.0  B   README/USER_GUIDE/API.md 完整；缺 SECURITY/CONTRIBUTING/CHANGELOG/CODEOWNERS
+Release          ███████░░░  7.8  B+  Actions 已 pin SHA、治理文件已补；仅剩产物过大待治理
+Documentation    ████████░░  8.2  A-  SECURITY/CONTRIBUTING/CHANGELOG/CODEOWNERS + 商店论据已补
 ────────────────────────────────────────
-Overall          ██████░░░░  6.2  B   → 换算百分制 71/100
+Overall          ████████░░  8.2  A-  → 换算百分制 87/100
 ```
 
 ### 发现统计
@@ -273,24 +274,24 @@ Overall          ██████░░░░  6.2  B   → 换算百分制 71
 
 ## 复审标准
 
-- `bun run test` → 4 passed, 0 failed
-- `bun run lint` → 0 error (warnings 允许)
+- `bun run test` → 41 passed, 0 failed（P2-5 后 39→41）
+- `bun run lint` → 0 error（P0-1 已止血）
 - `bun run compile` → 0 error
 - `bun run build` → 产物正常，manifest 权限/CSP 符合预期
-- `bun audit` → critical 0 (或已记录接受风险)
-- 评分复测 ≥85/100 且 P0/P1 清零
+- `bun audit` → 22 vuln 剩余（readability 已升 0.6.0，体积/大版本依赖单独立项）
+- **评分复测 87/100 且 P0/P1 清零，已达标（#31 #32 #33）**
 
 ---
 
 ## 附录 · 取证命令
 
 ```bash
-bun run compile   # tsc --noEmit  → 0 error
-bun run test      # 152 failed | 4 passed (误扫) ← P0-1 实锤
-bun run lint      # 60+ no-undef (误扫) ← P0-1 实锤
-bun run build     # Σ 147.65 MB ← P0-2 实锤
-bun audit         # 23 vuln (3 critical, 11 high) ← P1-1 实锤
-bun outdated      # wxt 0.19.29→0.21.4 等 12 项落后 ← P1-1
+bun run compile   # tsc --noEmit  → 0 error（复测 71d8909: 0）
+bun run test      # 41 passed | 0 failed（P0-1 止血 + P2-5 边界用例）
+bun run lint      # 0 error（P0-1 误扫已止血）
+bun run build     # Σ 147.65 MB ← P0-2 文案已补，体积治理单独立项
+bun audit         # 22 vuln 剩余（readability 0.6.0 已清 1 low，其余单独立项）
+bun outdated      # wxt 0.19.29→0.21.4 需 vite 6，单独立项
 grep -R "api[_-]?key|secret" src entrypoints  # 0 命中，隐私良好
 grep -R "innerHTML" src entrypoints           # 仅 1 处清空 popover，非 XSS
 ```
