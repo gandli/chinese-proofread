@@ -1,24 +1,51 @@
-# chinese-proofread 中文校对助手
+<div align="center">
 
-> 浏览器本地 AI 中文长文智能校对 — 离线可用，隐私保护
+# 📖 中文校对助手 · Chinese Proofread
 
-[![GitHub Release](https://img.shields.io/github/v/gandli/chinese-proofread?label=release&sort=semver)](https://github.com/gandli/chinese-proofread/releases/latest)
-[![GitHub Actions CI](https://img.shields.io/github/actions/workflow/status/gandli/chinese-proofread/ci.yml)](https://github.com/gandli/chinese-proofread/actions/workflows/ci.yml)
-[![GitHub](https://img.shields.io/github/license/gandli/chinese-proofread)](https://github.com/gandli/chinese-proofread/blob/main/LICENSE)
+> 浏览器本地 AI 中文长文智能校对 — **离线运行**，**隐私保护**
 
-<p align="center">
-  <img src="./assets/readme/hero.svg" width="100%" alt="chinese-proofread 中文校对助手 — 浏览器本地 AI 中文长文智能校对，红色波浪线标出错别字并给出修正建议">
-</p>
+[![GitHub Release](https://img.shields.io/github/v/gandli/chinese-proofread?style=flat-square&color=06b6d4)](https://github.com/gandli/chinese-proofread/releases)
+[![GitHub Actions CI](https://img.shields.io/github/actions/workflow/status/gandli/chinese-proofread/ci.yml?style=flat-square&label=CI)](https://github.com/gandli/chinese-proofread/actions)
+[![GitHub License](https://img.shields.io/github/license/gandli/chinese-proofread?style=flat-square)](LICENSE)
 
-## ✨ 它是什么
+**[📥 下载 Release](https://github.com/gandli/chinese-proofread/releases/latest)** · **[报告问题](https://github.com/gandli/chinese-proofread/issues)** · **[贡献指南](CONTRIBUTING.md)**
 
-一个完全本地运行的浏览器扩展，对当前网页中的长篇文章做**中文智能校对**——错别字、常见语法、用词不当，在原文中标红并给出修正建议。
+</div>
 
-**核心卖点**：离线 + 隐私 + 中文。
+---
 
-- 🔒 正文和校对结果**不上传任何服务器**
-- 📴 **断网也能工作**
-- 📖 支持**长篇文章**（自动分段，超 512 token 也能处理）
+## ✨ 核心特性
+
+<table>
+<tr>
+<td width="50%">
+
+**🔒 完全离线**
+正文和校对结果不上传任何服务器，断网也能工作。
+
+**🧠 智能校对**
+MacBERT4CSC Q8 模型本地推理，字符级错别字检测。
+
+**🎯 非侵入式**
+CSS Custom Highlights 高亮，不污染页面 DOM。
+
+</td>
+<td width="50%">
+
+**↩️ 撤销重做**
+多级撤销栈 + Ctrl+Z/Y 快捷键，误操作无忧。
+
+**📋 侧边栏总览**
+Side Panel 错误列表 + 跳转定位 + 批量操作。
+
+**📚 行业词库**
+烟草/医疗/法律/金融/科技五域，JSON 导入导出。
+
+</td>
+</tr>
+</table>
+
+---
 
 ## 🏗️ 工作原理
 
@@ -44,6 +71,8 @@
   结果高亮 diff + popup 展示
 ```
 
+---
+
 ## 🚀 快速开始
 
 ### 开发调试
@@ -66,20 +95,24 @@ bun build
 ### 测试
 
 ```bash
-bun run test       # 单元测试 (vitest, 22 用例)
+bun run test       # 单元测试 (vitest, 41 用例)
 bun run test:e2e   # 端到端 (Playwright 加载真实扩展)
 bun run compile    # 类型检查 (tsc)
 ```
+
+---
 
 ## 🧠 引擎路线
 
 双层演进：轻量模型快速扫描 → 大型 LLM 复杂校对。
 
-| 阶段       | 模型                            | 大小    | 任务                 |
-| ---------- | ------------------------------- | ------- | -------------------- |
-| **① 当前** | MacBERT4CSC (Q8)                | 114 MB  | 字符级快速错别字检测 |
-| **② 规划** | ChineseErrorCorrector-1.5B (Q4) | ~900 MB | 复杂语法/上下文纠错  |
-| **③ 愿景** | ChineseErrorCorrector4-4B       | —       | 高质量效果旗舰       |
+| 阶段 | 模型 | 大小 | 任务 |
+|------|------|------|------|
+| **① 当前** | MacBERT4CSC (Q8) | 114 MB | 字符级快速错别字检测 |
+| **② 规划** | ChineseErrorCorrector-1.5B (Q4) | ~900 MB | 复杂语法/上下文纠错 |
+| **③ 愿景** | ChineseErrorCorrector4-4B | — | 高质量效果旗舰 |
+
+---
 
 ## 📦 模型下载
 
@@ -99,6 +132,8 @@ public/models/
 
 模型来源：[gandli/macbert4csc-base-chinese-q8-onnx](https://huggingface.co/gandli/macbert4csc-base-chinese-q8-onnx)
 
+---
+
 ## 📄 许可证
 
-Apache-2.0
+[Apache-2.0](LICENSE)
