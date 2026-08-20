@@ -73,46 +73,50 @@ export class ProofHighlighter {
   undo() {
     const op = this.undoStack.pop();
     if (!op) return;
-    // 重建 Range 并恢复原文
-    const range = document.createRange();
-    range.setStart(op.node, op.startOffset);
-    range.setEnd(op.node, op.endOffset);
-    range.replaceWith(op.oldText);
-    // 恢复高亮
-    const hl = CSS.highlights.get("ps-proof") as Highlight | undefined;
-    if (hl) {
-      hl.add(range);
-      this.appliedRanges.add(range);
+    if (!op.node.isConnected) return;
+    try {
+      const range = document.createRange();
+      range.setStart(op.node, op.startOffset);
+      range.setEnd(op.node, op.endOffset);
+      range.replaceWith(op.oldText);
+      const hl = CSS.highlights.get("ps-proof") as Highlight | undefined;
+      if (hl) {
+        hl.add(range);
+        this.appliedRanges.add(range);
+      }
+      this.redoStack.push({
+        ...op,
+        startOffset: op.startOffset,
+        endOffset: op.startOffset + op.oldText.length,
+      });
+    } catch {
+      // 节点已悬空或 offset 越界，丢弃该 Op
     }
-    // 记录到 redo 栈（更新位置为当前位置）
-    this.redoStack.push({
-      ...op,
-      startOffset: op.startOffset,
-      endOffset: op.startOffset + op.oldText.length,
-    });
   }
 
   /** 重做 */
   redo() {
     const op = this.redoStack.pop();
     if (!op) return;
-    // 重建 Range 并重新应用修正
-    const range = document.createRange();
-    range.setStart(op.node, op.startOffset);
-    range.setEnd(op.node, op.endOffset);
-    range.replaceWith(op.newText);
-    // 移除高亮
-    const hl = CSS.highlights.get("ps-proof") as Highlight | undefined;
-    if (hl) {
-      hl.delete(range);
-      this.appliedRanges.delete(range);
+    if (!op.node.isConnected) return;
+    try {
+      const range = document.createRange();
+      range.setStart(op.node, op.startOffset);
+      range.setEnd(op.node, op.endOffset);
+      range.replaceWith(op.newText);
+      const hl = CSS.highlights.get("ps-proof") as Highlight | undefined;
+      if (hl) {
+        hl.delete(range);
+        this.appliedRanges.delete(range);
+      }
+      this.undoStack.push({
+        ...op,
+        startOffset: op.startOffset,
+        endOffset: op.startOffset + op.newText.length,
+      });
+    } catch {
+      // 悬空/越界静默丢弃
     }
-    // 记录到 undo 栈
-    this.undoStack.push({
-      ...op,
-      startOffset: op.startOffset,
-      endOffset: op.startOffset + op.newText.length,
-    });
   }
 
   /**

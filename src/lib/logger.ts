@@ -9,6 +9,12 @@ export const log = {
     // eslint-disable-next-line no-console
     console.error(`[error] ${message}`, context, error ?? "");
   },
-  info(_msg: string, _ctx: Record<string, unknown>) {},
-  debug(_msg: string, _ctx: Record<string, unknown>) {},
+  info(message: string, context: Record<string, unknown>) {
+    // eslint-disable-next-line no-console
+    console.info(`[info] ${message}`, context);
+  },
+  debug(message: string, context: Record<string, unknown>) {
+    // eslint-disable-next-line no-console
+    console.debug(`[debug] ${message}`, context);
+  },
 };
