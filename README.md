@@ -16,6 +16,14 @@
 
 ## ✨ 核心特性
 
+<p align="center">
+  <img src="./assets/readme/hero.svg" width="100%" alt="中文校对助手 — 红色波浪线标出错别字并给出修正建议">
+</p>
+
+<p align="center">
+  <img src="./assets/readme/banner.svg" width="100%" alt="中文校对助手 横幅 — 离线 AI 中文校对">
+</p>
+
 <table>
 <tr>
 <td width="50%">
@@ -44,6 +52,14 @@ Side Panel 错误列表 + 跳转定位 + 批量操作。
 </td>
 </tr>
 </table>
+
+---
+
+## 📸 预览
+
+<p align="center">
+  <img src="./assets/readme/screenshot-highlight.svg" width="800" alt="中文校对界面 — 红色波浪线标出错别字，点击出现气泡">
+</p>
 
 ---
 

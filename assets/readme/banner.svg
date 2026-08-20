@@ -1,0 +1,31 @@
+<!-- 简洁渐变色横幅 -->
+<p align="center">
+<svg width="800" height="200" viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <!-- 渐变背景 -->
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#f0f9ff"/>
+      <stop offset="100%" stop-color="#fef3c7"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="200" fill="url(#bgGrad)"/>
+
+  <!-- 左半侧文字 -->
+  <text x="60" y="110" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+        font-size="36" font-weight="700 fill="none" stroke="none">
+    <tspan fill="#0f172a">中文校对助手</tspan>
+  </text>
+  <text x="60" y="145" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+        font-size="18" fill="#64748b">
+    浏览器内置 AI · 离线校对 · 隐私保护
+  </text>
+
+  <!-- 右侧图标 -->
+  <g transform="translate(680,80) scale(1.2)">
+    <path d="M20 0 L40 20 L20 40 Z" fill="#ef4444"/>
+    <path d="M0 30 H40 V34 H0 Z" fill="#1e293b"/>
+    <path d="M5 25 C5 23 6 21 8 20 C10 19 12 19 14 20" stroke="#ef4444" stroke-width="1.5" fill="none"/>
+  </g>
+</svg>
+</p>
+
