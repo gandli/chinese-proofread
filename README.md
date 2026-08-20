@@ -2,7 +2,9 @@
 
 > 浏览器本地 AI 中文长文智能校对 — 离线可用，隐私保护
 
-[![CI](https://github.com/gandli/chinese-proofread/actions/workflows/ci.yml/badge.svg)](https://github.com/gandli/chinese-proofread/actions/workflows/ci.yml)
+[![GitHub Release](https://img.shields.io/github/v/gandli/chinese-proofread?label=release&sort=semver)](https://github.com/gandli/chinese-proofread/releases/latest)
+[![GitHub Actions CI](https://img.shields.io/github/actions/workflow/status/gandli/chinese-proofread/ci.yml)](https://github.com/gandli/chinese-proofread/actions/workflows/ci.yml)
+[![GitHub](https://img.shields.io/github/license/gandli/chinese-proofread)](https://github.com/gandli/chinese-proofread/blob/main/LICENSE)
 
 <p align="center">
   <img src="./assets/readme/hero.svg" width="100%" alt="chinese-proofread 中文校对助手 — 浏览器本地 AI 中文长文智能校对，红色波浪线标出错别字并给出修正建议">
