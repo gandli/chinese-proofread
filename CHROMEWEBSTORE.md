@@ -36,6 +36,8 @@
 **隐私与权限说明**
 
 - 仅使用 `storage` 权限保存词库配置，`sidePanel` 权限打开侧边栏
+- `host_permissions: <all_urls>`：在任意网页提取正文并高亮/修正，业务必需；已在 `public/privacy.html` 说明且无数据外发
+- `content_security_policy: wasm-unsafe-eval`：为 `onnxruntime-web` WASM 必需（非 JS eval），仅用于模型推理
 - 所有数据存储在浏览器本地，不上传任何云端
 - 模型文件（119MB ONNX + 词表）随扩展打包，完全离线推理
 
