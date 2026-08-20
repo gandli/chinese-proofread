@@ -32,13 +32,15 @@ export default defineContentScript({
       }
       if (msg?.type === "highlight") {
         highlighter.apply(msg.fullText ?? "", msg.diffs);
-        // 同步到 side panel
-        chrome.runtime.sendMessage({
-          type: "sync-diffs",
-          diffs: msg.diffs,
-          fullText: msg.fullText,
-          tabId: msg.tabId,
-        });
+        // 同步到 side panel（未打开时接收端不存在，静默忽略；MV3 下 sendMessage 异步 reject，需 .catch）
+        void chrome.runtime
+          .sendMessage({
+            type: "sync-diffs",
+            diffs: msg.diffs,
+            fullText: msg.fullText,
+            tabId: msg.tabId,
+          })
+          .catch(() => {});
         sendResponse({ ok: true });
         return;
       }
