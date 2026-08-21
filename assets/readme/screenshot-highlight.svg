@@ -1,4 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450">
+  <title>中文校对界面 — 红色波浪线标出错别字，点击出现气泡</title>
   <rect width="800" height="450" fill="#f8fafc"/>
   <rect x="20" y="20" width="760" height="410" rx="8" fill="#ffffff" stroke="#e2e8f0"/>
   <rect x="20" y="20" width="760" height="30" rx="8" fill="#334155"/>

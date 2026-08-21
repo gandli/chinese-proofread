@@ -6,9 +6,8 @@
 
 [![GitHub Release](https://img.shields.io/github/v/gandli/chinese-proofread?style=flat-square&color=06b6d4)](https://github.com/gandli/chinese-proofread/releases)
 [![GitHub Actions CI](https://img.shields.io/github/actions/workflow/status/gandli/chinese-proofread/ci.yml?style=flat-square&label=CI)](https://github.com/gandli/chinese-proofread/actions)
-[![GitHub License](https://img.shields.io/github/license/gandli/chinese-proofread?style=flat-square)](LICENSE)
 
-**[📥 下载 Release](https://github.com/gandli/chinese-proofread/releases/latest)** · **[报告问题](https://github.com/gandli/chinese-proofread/issues)** · **[贡献指南](CONTRIBUTING.md)**
+**[📥 下载 Release](https://github.com/gandli/chinese-proofread/releases/latest)** · **[报告问题](https://github.com/gandli/chinese-proofread/issues)** · **[贡献指南](CONTRIBUTING.md)** · **[使用手册](docs/USER_GUIDE.md)**
 
 </div>
 
@@ -18,10 +17,6 @@
 
 <p align="center">
   <img src="./assets/readme/hero.svg" width="100%" alt="中文校对助手 — 红色波浪线标出错别字并给出修正建议">
-</p>
-
-<p align="center">
-  <img src="./assets/readme/banner.svg" width="100%" alt="中文校对助手 横幅 — 离线 AI 中文校对">
 </p>
 
 <table>
@@ -63,9 +58,40 @@ Side Panel 错误列表 + 跳转定位 + 批量操作。
 
 ---
 
+## 🚀 快速开始
+
+### 开发调试
+
+```bash
+bun install
+bun run setup:model   # 下载模型到 public/models/ (114MB)
+bun dev
+```
+
+浏览器加载扩展：`chrome://extensions/` → 开发者模式 → 加载已解压 → 选 `.output/chrome-mv3`。
+
+### 构建
+
+```bash
+bun run setup:model
+bun run build
+# 输出：.output/chrome-mv3 可直接打包安装
+```
+
+### 测试与检查
+
+```bash
+bun run test       # 单元测试 (vitest, 41 用例)
+bun run test:e2e   # 端到端 (Playwright 加载真实扩展)
+bun run compile    # 类型检查 (tsc --noEmit)
+bun run lint       # ESLint
+```
+
+---
+
 ## 🏗️ 工作原理
 
-```
+```text
 浏览器网页
       │
       ▼
@@ -89,35 +115,6 @@ Side Panel 错误列表 + 跳转定位 + 批量操作。
 
 ---
 
-## 🚀 快速开始
-
-### 开发调试
-
-```bash
-bun install
-bun run setup:model   # 下载模型到 public/models/ (114MB)
-bun dev
-# 浏览器加载扩展：chrome://extensions/ → 开发者模式 → 加载已解压 → 选 .output/chrome-mv3
-```
-
-### 构建
-
-```bash
-bun run setup:model
-bun build
-# 输出：.output/chrome-mv3 可直接打包安装
-```
-
-### 测试
-
-```bash
-bun run test       # 单元测试 (vitest, 41 用例)
-bun run test:e2e   # 端到端 (Playwright 加载真实扩展)
-bun run compile    # 类型检查 (tsc)
-```
-
----
-
 ## 🧠 引擎路线
 
 双层演进：轻量模型快速扫描 → 大型 LLM 复杂校对。
@@ -132,7 +129,7 @@ bun run compile    # 类型检查 (tsc)
 
 ## 📦 模型下载
 
-当前内置 MacBERT4CSC（Q8 量化，452MB → 114MB，精度无损）。
+当前内置 MacBERT4CSC（Q8 量化，452MB → 114MB，精度无损）：
 
 ```bash
 bun run setup:model
@@ -152,4 +149,4 @@ public/models/
 
 ## 📄 许可证
 
-[Apache-2.0](LICENSE)
+Apache-2.0（LICENSE 文件补充中）
